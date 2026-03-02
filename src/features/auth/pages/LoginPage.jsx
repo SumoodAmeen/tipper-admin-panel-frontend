@@ -1,15 +1,20 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import bgImage from '../../../assets/auth/auth_background.jpg';
 import logo from '../../../assets/common/logo.png';
 import profileIcon from '../../../assets/auth/profile_icon.png';
 import lockIcon from '../../../assets/auth/lock_icon.png';
 import { adminLogin } from '../authApi';
+import { useAuth } from '../AuthContext';
 
 const LoginPage = () => {
-    const [identifier, setUsername] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -17,8 +22,8 @@ const LoginPage = () => {
         setLoading(true);
         try {
             const data = await adminLogin(identifier, password);
-            console.log('Login success:', data);
-            // TODO: save token and navigate to dashboard
+            login(data.data.accessToken);
+            navigate('/dashboard', { replace: true });
         } catch (err) {
             setError(err.message);
         } finally {
@@ -27,7 +32,7 @@ const LoginPage = () => {
     };
 
     const handleClear = () => {
-        setUsername('');
+        setIdentifier('');
         setPassword('');
     };
 
@@ -69,7 +74,7 @@ const LoginPage = () => {
                             <input
                                 type="text"
                                 value={identifier}
-                                onChange={(e) => setUsername(e.target.value)}
+                                onChange={(e) => setIdentifier(e.target.value)}
                                 placeholder="Enter identifier"
                                 className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#FFCC29]/50 focus:border-[#FFCC29] transition-colors bg-white placeholder:text-[#94a3b8] text-[16px] font-medium"
                                 required
