@@ -1,15 +1,27 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from '../features/auth';
+import { AuthProvider } from '../features/auth/AuthContext';
+import ProtectedRoute from '../components/ProtectedRoute';
+import AdminLayout from '../layouts/AdminLayout';
+import DashboardPage from '../features/dashboard/pages/DashboardPage';
 
 const AppRouter = () => {
     return (
         <BrowserRouter>
-            <Routes>
-                <Route path="/login" element={<LoginPage />} />
+            <AuthProvider>
+                <Routes>
+                    <Route path="/login" element={<LoginPage />} />
 
-                {/* Default route redirect to login */}
-                <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
+                    {/* Protected admin routes */}
+                    <Route element={<ProtectedRoute />}>
+                        <Route element={<AdminLayout />}>
+                            <Route path="/dashboard" element={<DashboardPage />} />
+                        </Route>
+                    </Route>
+
+                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+            </AuthProvider>
         </BrowserRouter>
     );
 };

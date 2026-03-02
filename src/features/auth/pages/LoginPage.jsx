@@ -1,20 +1,38 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import bgImage from '../../../assets/auth/auth_background.jpg';
 import logo from '../../../assets/common/logo.png';
 import profileIcon from '../../../assets/auth/profile_icon.png';
 import lockIcon from '../../../assets/auth/lock_icon.png';
+import { adminLogin } from '../authApi';
+import { useAuth } from '../AuthContext';
 
 const LoginPage = () => {
-    const [username, setUsername] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = (e) => {
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogin = async (e) => {
         e.preventDefault();
-        console.log('Login attempt:', { username, password });
+        setError('');
+        setLoading(true);
+        try {
+            const data = await adminLogin(identifier, password);
+            login(data.data.accessToken);
+            navigate('/dashboard', { replace: true });
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleClear = () => {
-        setUsername('');
+        setIdentifier('');
         setPassword('');
     };
 
@@ -51,13 +69,13 @@ const LoginPage = () => {
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                <img src={profileIcon} alt="username icon" className="h-[15px] w-[15px] object-contain" />
+                                <img src={profileIcon} alt="identifier icon" className="h-[15px] w-[15px] object-contain" />
                             </div>
                             <input
                                 type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Enter username"
+                                value={identifier}
+                                onChange={(e) => setIdentifier(e.target.value)}
+                                placeholder="Enter identifier"
                                 className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[#FFCC29]/50 focus:border-[#FFCC29] transition-colors bg-white placeholder:text-[#94a3b8] text-[16px] font-medium"
                                 required
                             />
@@ -84,20 +102,27 @@ const LoginPage = () => {
                         </div>
                     </div>
 
+                    {/* Error message */}
+                    {error && (
+                        <p className="text-red-500 text-[13px] font-medium text-center">{error}</p>
+                    )}
+
                     {/* Buttons */}
                     <div className="flex gap-4 pt-6">
                         <button
                             type="button"
                             onClick={handleClear}
-                            className="flex-1 py-[14px] px-[56.5px] bg-[#F1F5F9] text-[#475569] text-[16px] font-bold rounded-[8px] hover:bg-[#e2e8f0] transition-colors"
+                            disabled={loading}
+                            className="flex-1 py-[14px] px-[56.5px] bg-[#F1F5F9] text-[#475569] text-[16px] font-bold rounded-[8px] hover:bg-[#e2e8f0] transition-colors disabled:opacity-50"
                         >
                             Clear
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 py-[14px] px-[56.5px] bg-[#FDC63A] text-[#0F172A] text-[16px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors shadow-sm"
+                            disabled={loading}
+                            className="flex-1 py-[14px] px-[56.5px] bg-[#FDC63A] text-[#0F172A] text-[16px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors shadow-sm disabled:opacity-50"
                         >
-                            Login
+                            {loading ? 'Logging in...' : 'Login'}
                         </button>
                     </div>
                 </form>
