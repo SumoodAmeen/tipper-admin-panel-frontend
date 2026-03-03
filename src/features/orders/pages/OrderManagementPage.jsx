@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchPartners } from '../partnerApi';
+import { fetchOrders } from '../orderApi';
 
 const STATUS_CONFIG = {
-    Active: { label: 'Active', bg: 'bg-green-50', text: 'text-green-600' },
-    Pending: { label: 'New Partner', bg: 'bg-purple-50', text: 'text-purple-600' },
-    Blocked: { label: 'Blocked', bg: 'bg-red-50', text: 'text-red-500' },
-    Inactive: { label: 'Inactive', bg: 'bg-slate-100', text: 'text-slate-500' },
+    requested: { label: 'Requested', bg: 'bg-slate-100', text: 'text-slate-500' },
+    bidding: { label: 'Order Received', bg: 'bg-amber-50', text: 'text-amber-600' },
+    assigned: { label: 'Assigned', bg: 'bg-purple-50', text: 'text-purple-600' },
+    confirmed: { label: 'In Transit', bg: 'bg-blue-50', text: 'text-blue-500' },
+    delivered: { label: 'Delivered', bg: 'bg-green-50', text: 'text-green-600' },
+    cancelled: { label: 'Cancelled', bg: 'bg-red-50', text: 'text-red-500' },
 };
 
-const TABLE_COLS = ['PARTNER ID', 'NAME', 'MOBILE NUMBER', 'TYPE', 'CREATED DATE', 'STATUS', 'ACTION'];
+const TABLE_COLS = ['ORDER ID', 'PARTNER', 'MATERIAL', 'QUANTITY', 'AMOUNT', 'STATUS', 'ACTION'];
 
 const LIMIT = 10;
 
@@ -22,22 +24,29 @@ const formatDate = (dateStr) => {
     return `${dd} - ${mm} - ${yyyy}`;
 };
 
-const formatPhone = (phone) => {
-    if (!phone) return '--';
-    const digits = phone.replace(/\D/g, '');
-    if (digits.length === 10) return `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
-    return phone;
+const formatAmount = (order) => {
+    const amount = order.finalAmount > 0 ? order.finalAmount : order.estimatedAmount;
+    if (!amount) return '--';
+    return `₹${Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
-const PartnerManagementPage = () => {
+const formatQuantity = (order) => {
+    const qty = order.material?.quantity;
+    const loads = order.vehicle?.numberOfLoads;
+    if (qty && loads) return `${qty} X ${loads}`;
+    if (qty) return String(qty);
+    return '--';
+};
+
+const OrderManagementPage = () => {
     const navigate = useNavigate();
-    const [partners, setPartners] = useState([]);
+    const [orders, setOrders] = useState([]);
     const [pagination, setPagination] = useState({ totalCount: 0, totalPages: 1, currentPage: 1 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchInput, setSearchInput] = useState('');
     const [search, setSearch] = useState('');
-    const [type, setType] = useState('');
+    const [status, setStatus] = useState('');
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [page, setPage] = useState(1);
@@ -53,17 +62,17 @@ const PartnerManagementPage = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetchPartners({ page, limit: LIMIT, search, type, from, to })
+        fetchOrders({ page, limit: LIMIT, search, status, from, to })
             .then((data) => {
-                setPartners(data.partners);
-                setPagination(data.pagination);
+                setOrders(data.orders ?? []);
+                setPagination(data.pagination ?? { totalCount: 0, totalPages: 1, currentPage: 1 });
             })
             .catch((err) => setError(err.message))
             .finally(() => setLoading(false));
-    }, [page, search, type, from, to]);
+    }, [page, search, status, from, to]);
 
-    const handleTypeChange = (e) => {
-        setType(e.target.value);
+    const handleStatusChange = (e) => {
+        setStatus(e.target.value);
         setPage(1);
     };
 
@@ -127,7 +136,7 @@ const PartnerManagementPage = () => {
         <div>
             {/* Page Header */}
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-[30px] font-bold text-[#0F172A]">Partner Management</h1>
+                <h1 className="text-[30px] font-bold text-[#0F172A]">Order Management</h1>
                 <button className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -156,7 +165,7 @@ const PartnerManagementPage = () => {
                         type="text"
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
-                        placeholder="Search by Partner ID, Name, or Mobile N..."
+                        placeholder="Search by Order ID, Customer, or Partner..."
                         className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
                     />
                 </div>
@@ -199,16 +208,20 @@ const PartnerManagementPage = () => {
                     />
                 </div>
 
-                {/* Type dropdown */}
+                {/* Status dropdown */}
                 <div className="relative">
                     <select
-                        value={type}
-                        onChange={handleTypeChange}
-                        className="appearance-none pl-4 pr-9 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white min-w-[120px] cursor-pointer"
+                        value={status}
+                        onChange={handleStatusChange}
+                        className="appearance-none pl-4 pr-9 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white min-w-[140px] cursor-pointer"
                     >
                         <option value="">All</option>
-                        <option value="driver">Driver</option>
-                        <option value="dealer">Dealer</option>
+                        <option value="requested">Requested</option>
+                        <option value="bidding">Order Received</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="confirmed">In Transit</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -227,7 +240,7 @@ const PartnerManagementPage = () => {
                                 {TABLE_COLS.map((col) => (
                                     <th
                                         key={col}
-                                        className="px-6 py-3 text-left text-[12px] font-bold text-[#64748B] tracking-widest uppercase"
+                                        className="px-6 py-3 text-left text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase"
                                     >
                                         {col}
                                     </th>
@@ -245,44 +258,49 @@ const PartnerManagementPage = () => {
                                         ))}
                                     </tr>
                                 ))
-                            ) : partners.length === 0 ? (
+                            ) : orders.length === 0 ? (
                                 <tr>
                                     <td colSpan={7} className="px-6 py-10 text-center text-[#94A3B8] text-sm">
-                                        No partners found
+                                        No orders found
                                     </td>
                                 </tr>
                             ) : (
-                                partners.map((partner) => {
-                                    const status = STATUS_CONFIG[partner.status] || {
-                                        label: partner.status,
+                                orders.map((order) => {
+                                    const statusCfg = STATUS_CONFIG[order.status] || {
+                                        label: order.status,
                                         bg: 'bg-slate-100',
                                         text: 'text-slate-500',
                                     };
+                                    const partnerType = order.assignedPartner?.partnerType;
+                                    const partnerLabel = partnerType
+                                        ? partnerType.charAt(0).toUpperCase() + partnerType.slice(1)
+                                        : '--';
+
                                     return (
-                                        <tr key={partner._id} className="border-b border-[#F8FAFC] hover:bg-[#FAFAFA] transition-colors">
-                                            <td className="px-6 py-4 text-[14px] font-medium text-[#0F172A]">
-                                                #{partner.uniqueId}
+                                        <tr key={order._id} className="border-b border-[#F8FAFC] hover:bg-[#FAFAFA] transition-colors">
+                                            <td className="px-6 py-4 text-[14px] font-bold text-[#0F172A]">
+                                                #{order.orderNumber}
                                             </td>
                                             <td className="px-6 py-4 text-[14px] text-[#475569]">
-                                                {partner.name}
+                                                {partnerLabel}
                                             </td>
                                             <td className="px-6 py-4 text-[14px] text-[#475569]">
-                                                {formatPhone(partner.phone)}
-                                            </td>
-                                            <td className="px-6 py-4 text-[14px] text-[#475569] capitalize">
-                                                {partner.partnerType}
+                                                {order.material?.materialName ?? '--'}
                                             </td>
                                             <td className="px-6 py-4 text-[14px] text-[#475569]">
-                                                {formatDate(partner.createdAt)}
+                                                {formatQuantity(order)}
+                                            </td>
+                                            <td className="px-6 py-4 text-[14px] font-semibold text-[#0F172A]">
+                                                {formatAmount(order)}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-3 py-1 rounded-full text-[12px] font-semibold ${status.bg} ${status.text}`}>
-                                                    {status.label}
+                                                <span className={`px-3 py-1 rounded-full text-[12px] font-semibold ${statusCfg.bg} ${statusCfg.text}`}>
+                                                    {statusCfg.label}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <button
-                                                    onClick={() => navigate(`/partner-management/${partner._id}`)}
+                                                    onClick={() => navigate(`/order-management/${order._id}`)}
                                                     className="px-4 py-1.5 bg-[#FDC63A] text-[#0F172A] text-[12px] font-bold rounded-[6px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
                                                 >
                                                     Details
@@ -297,10 +315,10 @@ const PartnerManagementPage = () => {
                 </div>
 
                 {/* Pagination */}
-                {!loading && partners.length > 0 && (
+                {!loading && orders.length > 0 && (
                     <div className="px-6 py-4 flex items-center justify-between border-t border-[#F1F5F9]">
                         <p className="text-[14px] text-[#64748B]">
-                            Showing {showingFrom} to {showingTo} of {totalCount} Partners
+                            Showing {showingFrom} to {showingTo} of {totalCount} orders
                         </p>
                         {renderPageButtons()}
                     </div>
@@ -310,4 +328,4 @@ const PartnerManagementPage = () => {
     );
 };
 
-export default PartnerManagementPage;
+export default OrderManagementPage;
