@@ -4,6 +4,7 @@ import { AuthProvider } from '../features/auth/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 import AdminLayout from '../layouts/AdminLayout';
 import DashboardPage from '../features/dashboard/pages/DashboardPage';
+import PartnerManagementPage from '../features/partners/pages/PartnerManagementPage';
 
 const AppRouter = () => {
     return (
@@ -16,6 +17,7 @@ const AppRouter = () => {
                     <Route element={<ProtectedRoute />}>
                         <Route element={<AdminLayout />}>
                             <Route path="/dashboard" element={<DashboardPage />} />
+                            <Route path="/partner-management" element={<PartnerManagementPage />} />
                         </Route>
                     </Route>
 
