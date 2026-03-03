@@ -22,7 +22,7 @@ const LoginPage = () => {
         setLoading(true);
         try {
             const data = await adminLogin(identifier, password);
-            login(data.data.accessToken, data.data.admin);
+            login(data.data.accessToken, data.data.refreshToken, data.data.admin);
             navigate('/dashboard', { replace: true });
         } catch (err) {
             setError(err.message);
