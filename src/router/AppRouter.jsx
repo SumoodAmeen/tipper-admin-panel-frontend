@@ -5,6 +5,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import AdminLayout from '../layouts/AdminLayout';
 import DashboardPage from '../features/dashboard/pages/DashboardPage';
 import PartnerManagementPage from '../features/partners/pages/PartnerManagementPage';
+import CustomerManagementPage from '../features/customers/pages/CustomerManagementPage';
 
 const AppRouter = () => {
     return (
@@ -18,6 +19,7 @@ const AppRouter = () => {
                         <Route element={<AdminLayout />}>
                             <Route path="/dashboard" element={<DashboardPage />} />
                             <Route path="/partner-management" element={<PartnerManagementPage />} />
+                            <Route path="/customer-management" element={<CustomerManagementPage />} />
                         </Route>
                     </Route>
 
