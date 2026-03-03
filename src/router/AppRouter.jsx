@@ -6,6 +6,7 @@ import AdminLayout from '../layouts/AdminLayout';
 import DashboardPage from '../features/dashboard/pages/DashboardPage';
 import PartnerManagementPage from '../features/partners/pages/PartnerManagementPage';
 import CustomerManagementPage from '../features/customers/pages/CustomerManagementPage';
+import OrderManagementPage from '../features/orders/pages/OrderManagementPage';
 
 const AppRouter = () => {
     return (
@@ -20,6 +21,7 @@ const AppRouter = () => {
                             <Route path="/dashboard" element={<DashboardPage />} />
                             <Route path="/partner-management" element={<PartnerManagementPage />} />
                             <Route path="/customer-management" element={<CustomerManagementPage />} />
+                            <Route path="/order-management" element={<OrderManagementPage />} />
                         </Route>
                     </Route>
 
