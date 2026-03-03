@@ -7,6 +7,7 @@ import DashboardPage from '../features/dashboard/pages/DashboardPage';
 import PartnerManagementPage from '../features/partners/pages/PartnerManagementPage';
 import CustomerManagementPage from '../features/customers/pages/CustomerManagementPage';
 import OrderManagementPage from '../features/orders/pages/OrderManagementPage';
+import PromotionsPage from '../features/promotions/pages/PromotionsPage';
 
 const AppRouter = () => {
     return (
@@ -22,6 +23,7 @@ const AppRouter = () => {
                             <Route path="/partner-management" element={<PartnerManagementPage />} />
                             <Route path="/customer-management" element={<CustomerManagementPage />} />
                             <Route path="/order-management" element={<OrderManagementPage />} />
+                            <Route path="/promotions" element={<PromotionsPage />} />
                         </Route>
                     </Route>
 
