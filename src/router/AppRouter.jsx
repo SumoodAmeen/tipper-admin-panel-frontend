@@ -8,6 +8,7 @@ import PartnerManagementPage from '../features/partners/pages/PartnerManagementP
 import CustomerManagementPage from '../features/customers/pages/CustomerManagementPage';
 import OrderManagementPage from '../features/orders/pages/OrderManagementPage';
 import PromotionsPage from '../features/promotions/pages/PromotionsPage';
+import BidManagementPage from '../features/bids/pages/BidManagementPage';
 
 const AppRouter = () => {
     return (
@@ -24,6 +25,7 @@ const AppRouter = () => {
                             <Route path="/customer-management" element={<CustomerManagementPage />} />
                             <Route path="/order-management" element={<OrderManagementPage />} />
                             <Route path="/promotions" element={<PromotionsPage />} />
+                            <Route path="/bid-management" element={<BidManagementPage />} />
                         </Route>
                     </Route>
 
