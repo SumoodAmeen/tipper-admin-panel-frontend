@@ -41,11 +41,11 @@ export const fetchOrderById = async (id) => {
     return data.data;
 };
 
-export const cancelOrder = async (id) => {
-    const response = await fetch(`${BASE_URL}/orders/manage/${id}/status`, {
+export const cancelOrder = async (id, reason) => {
+    const response = await fetch(`${BASE_URL}/orders/manage/${id}/cancel`, {
         method: 'PATCH',
         headers: authHeaders(),
-        body: JSON.stringify({ status: 'cancelled' }),
+        body: JSON.stringify({ reason }),
     });
 
     const data = await response.json();

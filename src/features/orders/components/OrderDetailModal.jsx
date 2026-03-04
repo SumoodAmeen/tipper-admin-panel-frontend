@@ -63,6 +63,8 @@ const OrderDetailModal = ({ orderId, onClose }) => {
     const [error, setError] = useState('');
     const [cancelling, setCancelling] = useState(false);
     const [cancelError, setCancelError] = useState('');
+    const [showCancelDialog, setShowCancelDialog] = useState(false);
+    const [cancelReason, setCancelReason] = useState('');
 
     useEffect(() => {
         const load = async () => {
@@ -90,8 +92,10 @@ const OrderDetailModal = ({ orderId, onClose }) => {
         setCancelling(true);
         setCancelError('');
         try {
-            await cancelOrder(orderId);
+            await cancelOrder(orderId, cancelReason);
             setOrder((prev) => ({ ...prev, status: 'cancelled' }));
+            setShowCancelDialog(false);
+            setCancelReason('');
         } catch (err) {
             setCancelError(err.message);
         } finally {
@@ -330,20 +334,16 @@ const OrderDetailModal = ({ orderId, onClose }) => {
                             {/* Cancel Order */}
                             {canCancel && (
                                 <div>
-                                    {cancelError && (
-                                        <p className="text-red-500 text-[13px] mb-2 text-center">{cancelError}</p>
-                                    )}
                                     <button
-                                        onClick={handleCancel}
-                                        disabled={cancelling}
-                                        className="w-full flex items-center justify-center gap-2 py-3 bg-red-50 border border-red-100 text-red-500 text-[14px] font-bold rounded-[10px] hover:bg-red-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        onClick={() => setShowCancelDialog(true)}
+                                        className="w-full flex items-center justify-center gap-2 py-3 bg-red-50 border border-red-100 text-red-500 text-[14px] font-bold rounded-[10px] hover:bg-red-100 transition-colors"
                                     >
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                             <circle cx="12" cy="12" r="10" />
                                             <line x1="15" y1="9" x2="9" y2="15" />
                                             <line x1="9" y1="9" x2="15" y2="15" />
                                         </svg>
-                                        {cancelling ? 'Cancelling...' : 'Cancel Order'}
+                                        Cancel Order
                                     </button>
                                     <p className="text-[12px] text-[#94A3B8] text-center mt-2">
                                         This action cannot be undone once the driver has started the trip.
@@ -354,6 +354,54 @@ const OrderDetailModal = ({ orderId, onClose }) => {
                     )}
                 </div>
             </div>
+
+            {/* Cancel Confirmation Dialog */}
+            {showCancelDialog && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-60 p-4">
+                    <div className="bg-white rounded-[16px] w-full max-w-[420px] shadow-xl p-6">
+                        <h3 className="text-[18px] font-bold text-[#0F172A] mb-5">Cancel order</h3>
+
+                        <label className="block text-[13px] font-semibold text-[#475569] mb-2">
+                            Reason for Cancellation
+                        </label>
+                        <textarea
+                            value={cancelReason}
+                            onChange={(e) => setCancelReason(e.target.value)}
+                            placeholder="Enter detailed reason for cancelling the order..."
+                            rows={4}
+                            className="w-full px-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] resize-none"
+                        />
+                        <p className="text-[12px] text-[#94A3B8] mt-2">
+                            Note: Order cancellations are only permitted in exceptional cases.
+                        </p>
+
+                        {cancelError && (
+                            <p className="text-red-500 text-[13px] mt-3">{cancelError}</p>
+                        )}
+
+                        <div className="flex items-center justify-end gap-3 mt-5">
+                            <button
+                                onClick={() => {
+                                    setShowCancelDialog(false);
+                                    setCancelReason('');
+                                    setCancelError('');
+                                }}
+                                disabled={cancelling}
+                                className="px-5 py-2 text-[14px] font-semibold text-[#475569] border border-[#E2E8F0] rounded-[8px] hover:bg-slate-50 transition-colors disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleCancel}
+                                disabled={cancelling || !cancelReason.trim()}
+                                className="px-5 py-2 text-[14px] font-bold text-[#0F172A] bg-[#FDC63A] rounded-[8px] hover:bg-[#fbbf24] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {cancelling ? 'Cancelling...' : 'Cancel Order'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
