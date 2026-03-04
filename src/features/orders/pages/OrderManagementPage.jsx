@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { fetchOrders } from '../orderApi';
+import OrderDetailModal from '../components/OrderDetailModal';
 
 const STATUS_CONFIG = {
     requested: { label: 'Requested', bg: 'bg-slate-100', text: 'text-slate-500' },
@@ -39,8 +39,8 @@ const formatQuantity = (order) => {
 };
 
 const OrderManagementPage = () => {
-    const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [pagination, setPagination] = useState({ totalCount: 0, totalPages: 1, currentPage: 1 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -300,7 +300,7 @@ const OrderManagementPage = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <button
-                                                    onClick={() => navigate(`/order-management/${order._id}`)}
+                                                    onClick={() => setSelectedOrderId(order._id)}
                                                     className="px-4 py-1.5 bg-[#FDC63A] text-[#0F172A] text-[12px] font-bold rounded-[6px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
                                                 >
                                                     Details
@@ -324,6 +324,13 @@ const OrderManagementPage = () => {
                     </div>
                 )}
             </div>
+
+            {selectedOrderId && (
+                <OrderDetailModal
+                    orderId={selectedOrderId}
+                    onClose={() => setSelectedOrderId(null)}
+                />
+            )}
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchAdminDashboard, fetchOrderOverview } from '../dashboardApi';
+import OrderDetailModal from '../../orders/components/OrderDetailModal';
 import cartIcon from '../../../assets/dashboard/cart.png';
 import boardIcon from '../../../assets/dashboard/board.png';
 import timerIcon from '../../../assets/dashboard/timer.png';
@@ -89,6 +90,7 @@ const DashboardPage = () => {
     const [statsLoading, setStatsLoading] = useState(true);
     const [ordersLoading, setOrdersLoading] = useState(true);
     const [error, setError] = useState('');
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
 
     useEffect(() => {
         fetchAdminDashboard()
@@ -196,7 +198,7 @@ const DashboardPage = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <button
-                                                    onClick={() => navigate(`/order-management`)}
+                                                    onClick={() => setSelectedOrderId(order._id)}
                                                     className="px-4 py-1.5 bg-[#FDC63A] text-[#0F172A] text-[12px] font-bold rounded-[6px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
                                                 >
                                                     Details
@@ -220,6 +222,13 @@ const DashboardPage = () => {
                     </button>
                 </div>
             </div>
+
+            {selectedOrderId && (
+                <OrderDetailModal
+                    orderId={selectedOrderId}
+                    onClose={() => setSelectedOrderId(null)}
+                />
+            )}
         </div>
     );
 };

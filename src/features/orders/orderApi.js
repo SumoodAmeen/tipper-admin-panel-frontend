@@ -25,3 +25,34 @@ export const fetchOrders = async ({ page = 1, limit = 10, search = '', status = 
 
     return data.data;
 };
+
+export const fetchOrderById = async (id) => {
+    const response = await fetch(`${BASE_URL}/orders/manage/${id}`, {
+        method: 'GET',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch order');
+    }
+
+    return data.data;
+};
+
+export const cancelOrder = async (id) => {
+    const response = await fetch(`${BASE_URL}/orders/manage/${id}/status`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+        body: JSON.stringify({ status: 'cancelled' }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to cancel order');
+    }
+
+    return data;
+};
