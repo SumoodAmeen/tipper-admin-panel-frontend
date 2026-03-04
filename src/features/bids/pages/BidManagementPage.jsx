@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { fetchOrders } from '../../orders/orderApi';
 import { getMediaUrl } from '../../../config/api';
+import VerifyRequestModal from '../components/VerifyRequestModal';
 
 const LIMIT = 12;
 
 const SkeletonCard = () => (
-    <div className="bg-white rounded-[12px] overflow-hidden shadow-sm border border-[#F1F5F9]">
-        <div className="w-full h-[180px] bg-slate-100 animate-pulse" />
+    <div className="bg-white rounded-[16px] overflow-hidden shadow-sm border border-[#F1F5F9]">
+        <div className="px-[16px] pt-[16px]">
+            <div className="w-full h-[180px] bg-slate-100 animate-pulse rounded-[12px]" />
+        </div>
         <div className="p-4 space-y-3">
             <div className="h-4 bg-slate-100 animate-pulse rounded w-3/4" />
             <div className="h-9 bg-slate-100 animate-pulse rounded" />
@@ -16,12 +18,12 @@ const SkeletonCard = () => (
 );
 
 const BidManagementPage = () => {
-    const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [pagination, setPagination] = useState({ totalCount: 0, totalPages: 1, currentPage: 1 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [page, setPage] = useState(1);
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     useEffect(() => {
         setLoading(true);
@@ -33,6 +35,10 @@ const BidManagementPage = () => {
             .catch((err) => setError(err.message))
             .finally(() => setLoading(false));
     }, [page]);
+
+    const handleActionComplete = (orderId) => {
+        setOrders((prev) => prev.filter((o) => o._id !== orderId));
+    };
 
     const { totalPages, currentPage } = pagination;
 
@@ -135,7 +141,7 @@ const BidManagementPage = () => {
                                         {name}
                                     </p>
                                     <button
-                                        onClick={() => navigate(`/bid-management/${order._id}`)}
+                                        onClick={() => setSelectedOrder(order)}
                                         className="w-full py-2 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
                                     >
                                         Attend
@@ -152,6 +158,15 @@ const BidManagementPage = () => {
                 <div className="mt-6 flex justify-center">
                     {renderPageButtons()}
                 </div>
+            )}
+
+            {/* Verify Request Modal */}
+            {selectedOrder && (
+                <VerifyRequestModal
+                    order={selectedOrder}
+                    onClose={() => setSelectedOrder(null)}
+                    onActionComplete={handleActionComplete}
+                />
             )}
         </div>
     );
