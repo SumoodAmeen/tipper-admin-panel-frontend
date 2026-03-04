@@ -25,3 +25,18 @@ export const fetchPartners = async ({ page = 1, limit = 10, search = '', type = 
 
     return data.data;
 };
+
+export const fetchPartnerById = async (id) => {
+    const response = await fetch(`${BASE_URL}/partner/manage/${id}`, {
+        method: 'GET',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch partner');
+    }
+
+    return data.data;
+};
