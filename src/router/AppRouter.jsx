@@ -9,6 +9,7 @@ import CustomerManagementPage from '../features/customers/pages/CustomerManageme
 import OrderManagementPage from '../features/orders/pages/OrderManagementPage';
 import PromotionsPage from '../features/promotions/pages/PromotionsPage';
 import BidManagementPage from '../features/bids/pages/BidManagementPage';
+import PartnerDetailPage from '../features/partners/pages/PartnerDetailPage';
 
 const AppRouter = () => {
     return (
@@ -22,6 +23,7 @@ const AppRouter = () => {
                         <Route element={<AdminLayout />}>
                             <Route path="/dashboard" element={<DashboardPage />} />
                             <Route path="/partner-management" element={<PartnerManagementPage />} />
+                            <Route path="/partner-management/:id" element={<PartnerDetailPage />} />
                             <Route path="/customer-management" element={<CustomerManagementPage />} />
                             <Route path="/order-management" element={<OrderManagementPage />} />
                             <Route path="/promotions" element={<PromotionsPage />} />

@@ -40,3 +40,70 @@ export const fetchPartnerById = async (id) => {
 
     return data.data;
 };
+
+export const fetchMaterialById = async (id) => {
+    const response = await fetch(`${BASE_URL}/materialCategories/materials/${id}`, {
+        method: 'GET',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch material');
+    }
+
+    return data.data;
+};
+
+export const notifyPartner = async (id, { title, message }) => {
+    const response = await fetch(`${BASE_URL}/partner/manage/${id}/notify`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ title, message }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to send notification');
+    }
+
+    return data;
+};
+
+export const blockPartner = async (id) => {
+    const response = await fetch(`${BASE_URL}/partner/manage/${id}/block`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to block partner');
+    }
+
+    return data;
+};
+
+export const fetchPartnerOrders = async (partnerId, { page = 1, limit = 10, search = '', status = '', from = '', to = '' } = {}) => {
+    const params = new URLSearchParams({ page, limit });
+    if (search) params.set('search', search);
+    if (status) params.set('status', status);
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+
+    const response = await fetch(`${BASE_URL}/orders/manage/partner/${partnerId}/orders?${params}`, {
+        method: 'GET',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch partner orders');
+    }
+
+    return data.data;
+};
