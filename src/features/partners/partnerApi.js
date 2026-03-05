@@ -87,6 +87,38 @@ export const blockPartner = async (id) => {
     return data;
 };
 
+export const fetchPendingVerifications = async ({ page = 1, limit = 12 } = {}) => {
+    const params = new URLSearchParams({ page, limit });
+
+    const response = await fetch(`${BASE_URL}/partner/manage/drivers/verifications/pending?${params}`, {
+        method: 'GET',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch pending verifications');
+    }
+
+    return data.data;
+};
+
+export const approveDriverVerification = async (id) => {
+    const response = await fetch(`${BASE_URL}/partner/manage/drivers/${id}/verification/approve`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to approve driver');
+    }
+
+    return data;
+};
+
 export const fetchPartnerOrders = async (partnerId, { page = 1, limit = 10, search = '', status = '', from = '', to = '' } = {}) => {
     const params = new URLSearchParams({ page, limit });
     if (search) params.set('search', search);

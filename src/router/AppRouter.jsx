@@ -11,6 +11,7 @@ import PromotionsPage from '../features/promotions/pages/PromotionsPage';
 import BidManagementPage from '../features/bids/pages/BidManagementPage';
 import PartnerDetailPage from '../features/partners/pages/PartnerDetailPage';
 import CustomerDetailPage from '../features/customers/pages/CustomerDetailPage';
+import DriverVerificationPage from '../features/partners/pages/DriverVerificationPage';
 
 const AppRouter = () => {
     return (
@@ -30,6 +31,7 @@ const AppRouter = () => {
                             <Route path="/order-management" element={<OrderManagementPage />} />
                             <Route path="/promotions" element={<PromotionsPage />} />
                             <Route path="/bid-management" element={<BidManagementPage />} />
+                            <Route path="/driver-verification" element={<DriverVerificationPage />} />
                         </Route>
                     </Route>
 
