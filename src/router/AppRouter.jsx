@@ -10,6 +10,7 @@ import OrderManagementPage from '../features/orders/pages/OrderManagementPage';
 import PromotionsPage from '../features/promotions/pages/PromotionsPage';
 import BidManagementPage from '../features/bids/pages/BidManagementPage';
 import PartnerDetailPage from '../features/partners/pages/PartnerDetailPage';
+import CustomerDetailPage from '../features/customers/pages/CustomerDetailPage';
 
 const AppRouter = () => {
     return (
@@ -25,6 +26,7 @@ const AppRouter = () => {
                             <Route path="/partner-management" element={<PartnerManagementPage />} />
                             <Route path="/partner-management/:id" element={<PartnerDetailPage />} />
                             <Route path="/customer-management" element={<CustomerManagementPage />} />
+                            <Route path="/customer-management/:id" element={<CustomerDetailPage />} />
                             <Route path="/order-management" element={<OrderManagementPage />} />
                             <Route path="/promotions" element={<PromotionsPage />} />
                             <Route path="/bid-management" element={<BidManagementPage />} />
