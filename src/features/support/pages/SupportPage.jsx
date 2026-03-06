@@ -404,15 +404,32 @@ const SupportPage = () => {
     const [summaryModal, setSummaryModal] = useState(null); // { ticketId, hasSummary }
     const [orderDetailId, setOrderDetailId] = useState(null);
 
-    const loadTickets = (p = page) => {
+    const loadTickets = async (p = page) => {
         setLoading(true);
-        fetchTickets({ page: p, limit: LIMIT })
-            .then((data) => {
-                setTickets(data.tickets);
-                setPagination(data.pagination);
-            })
-            .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
+        setError('');
+        try {
+            const data = await fetchTickets({ page: p, limit: LIMIT });
+            const list = data.tickets;
+            setPagination(data.pagination);
+
+            // Fetch individual details for tickets that have a summary to get the category
+            const withDetails = await Promise.all(
+                list.map(async (ticket) => {
+                    if (!ticket.hasSummary) return ticket;
+                    try {
+                        const detail = await fetchTicketById(ticket._id);
+                        return { ...ticket, supportCategory: detail.summary?.supportCategory || null };
+                    } catch {
+                        return ticket;
+                    }
+                })
+            );
+            setTickets(withDetails);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -545,7 +562,7 @@ const SupportPage = () => {
                         ) : (
                             tickets.map((ticket) => {
                                 const imgUrl = getMediaUrl(ticket.materialImage);
-                                const categoryName = ticket.supportCategory?.name || null;
+                                const categoryName = ticket.supportCategory?.name ?? null;
                                 const color = getCategoryColor(categoryName);
                                 return (
                                     <div
