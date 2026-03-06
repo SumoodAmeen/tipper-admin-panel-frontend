@@ -12,6 +12,7 @@ import BidManagementPage from '../features/bids/pages/BidManagementPage';
 import PartnerDetailPage from '../features/partners/pages/PartnerDetailPage';
 import CustomerDetailPage from '../features/customers/pages/CustomerDetailPage';
 import DriverVerificationPage from '../features/partners/pages/DriverVerificationPage';
+import SupportPage from '../features/support/pages/SupportPage';
 
 const AppRouter = () => {
     return (
@@ -32,6 +33,7 @@ const AppRouter = () => {
                             <Route path="/promotions" element={<PromotionsPage />} />
                             <Route path="/bid-management" element={<BidManagementPage />} />
                             <Route path="/driver-verification" element={<DriverVerificationPage />} />
+                            <Route path="/support" element={<SupportPage />} />
                         </Route>
                     </Route>
 
