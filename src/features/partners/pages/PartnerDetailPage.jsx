@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPartnerById, fetchMaterialById, notifyPartner, blockPartner, fetchPartnerOrders } from '../partnerApi';
+import { fetchPartnerById, fetchMaterialById, notifyPartner, blockPartner, fetchPartnerOrders, requestVerificationSelfie } from '../partnerApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
 
@@ -148,6 +148,10 @@ const PartnerDetailPage = () => {
     const [blocking, setBlocking] = useState(false);
     const [blockError, setBlockError] = useState('');
 
+    const [requestingVerification, setRequestingVerification] = useState(false);
+    const [verificationRequested, setVerificationRequested] = useState(false);
+    const [verificationError, setVerificationError] = useState('');
+
     useEffect(() => {
         const load = async () => {
             try {
@@ -214,6 +218,19 @@ const PartnerDetailPage = () => {
             setBlockError(err.message);
         } finally {
             setBlocking(false);
+        }
+    };
+
+    const handleRequestVerification = async () => {
+        setRequestingVerification(true);
+        setVerificationError('');
+        try {
+            await requestVerificationSelfie(id);
+            setVerificationRequested(true);
+        } catch (err) {
+            setVerificationError(err.message);
+        } finally {
+            setRequestingVerification(false);
         }
     };
 
@@ -464,11 +481,25 @@ const PartnerDetailPage = () => {
                 {/* Right column */}
                 <div className="col-span-1 space-y-4">
                     <button
-                        disabled
-                        className="w-full py-3 border border-[#E2E8F0] rounded-[10px] text-[14px] font-semibold text-[#64748B] bg-white opacity-60 cursor-not-allowed"
+                        onClick={handleRequestVerification}
+                        disabled={requestingVerification || verificationRequested}
+                        className={`w-full py-3 border border-[#E2E8F0] rounded-[10px] text-[14px] font-semibold bg-white transition-colors ${
+                            verificationRequested
+                                ? 'text-green-600 border-green-200 cursor-default'
+                                : requestingVerification
+                                ? 'text-[#64748B] opacity-60 cursor-not-allowed'
+                                : 'text-[#64748B] hover:bg-slate-50 cursor-pointer'
+                        }`}
                     >
-                        Request Verification Selfie
+                        {verificationRequested
+                            ? 'Verification Requested'
+                            : requestingVerification
+                            ? 'Requesting...'
+                            : 'Request Verification Selfie'}
                     </button>
+                    {verificationError && (
+                        <p className="text-red-500 text-[12px] -mt-2">{verificationError}</p>
+                    )}
                     <button
                         disabled
                         className="w-full flex items-center justify-center gap-2 py-3 bg-[#FDC63A] rounded-[10px] text-[14px] font-bold text-[#0F172A] opacity-60 cursor-not-allowed"
