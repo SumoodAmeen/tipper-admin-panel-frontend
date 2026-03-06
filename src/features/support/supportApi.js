@@ -92,6 +92,26 @@ export const fetchCategories = async () => {
     return data.data;
 };
 
+export const fetchRatings = async ({ page = 1, limit = 10, search = '', from = '', to = '' } = {}) => {
+    const params = new URLSearchParams({ page, limit });
+    if (search) params.set('search', search);
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+
+    const response = await fetch(`${BASE_URL}/ratings/all?${params}`, {
+        method: 'GET',
+        headers: authHeaders(),
+    });
+
+    const data = await parseJSON(response);
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch ratings');
+    }
+
+    return data.data;
+};
+
 export const addSummary = async (ticketId, { supportCategory, customerComplaint, solution }) => {
     const response = await fetch(`${BASE_URL}/support/tickets/${ticketId}/summary`, {
         method: 'PATCH',

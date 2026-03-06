@@ -8,6 +8,7 @@ import {
     fetchCategories,
     addSummary,
     updateSummary,
+    fetchRatings,
 } from '../supportApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
@@ -404,6 +405,17 @@ const SupportPage = () => {
     const [summaryModal, setSummaryModal] = useState(null); // { ticketId, hasSummary }
     const [orderDetailId, setOrderDetailId] = useState(null);
 
+    // Reviews tab state
+    const [reviews, setReviews] = useState([]);
+    const [reviewsPagination, setReviewsPagination] = useState({ totalCount: 0, totalPages: 1, currentPage: 1 });
+    const [reviewsLoading, setReviewsLoading] = useState(false);
+    const [reviewsError, setReviewsError] = useState('');
+    const [reviewsPage, setReviewsPage] = useState(1);
+    const [reviewsSearchInput, setReviewsSearchInput] = useState('');
+    const [reviewsSearch, setReviewsSearch] = useState('');
+    const [reviewsFrom, setReviewsFrom] = useState('');
+    const [reviewsTo, setReviewsTo] = useState('');
+
     const loadTickets = async (p = page) => {
         setLoading(true);
         setError('');
@@ -435,6 +447,27 @@ const SupportPage = () => {
     useEffect(() => {
         loadTickets(page);
     }, [page]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setReviewsSearch(reviewsSearchInput);
+            setReviewsPage(1);
+        }, 400);
+        return () => clearTimeout(timer);
+    }, [reviewsSearchInput]);
+
+    useEffect(() => {
+        if (activeTab !== 'reviews') return;
+        setReviewsLoading(true);
+        setReviewsError('');
+        fetchRatings({ page: reviewsPage, limit: LIMIT, search: reviewsSearch, from: reviewsFrom, to: reviewsTo })
+            .then((data) => {
+                setReviews(data.ratings);
+                setReviewsPagination(data.pagination);
+            })
+            .catch((err) => setReviewsError(err.message))
+            .finally(() => setReviewsLoading(false));
+    }, [activeTab, reviewsPage, reviewsSearch, reviewsFrom, reviewsTo]);
 
     const handleCreated = () => {
         setShowAddModal(false);
@@ -517,9 +550,180 @@ const SupportPage = () => {
             </div>
 
             {activeTab === 'reviews' ? (
-                <div className="flex items-center justify-center py-24 text-[#94A3B8] text-[15px] font-medium">
-                    Unavailable
-                </div>
+                <>
+                    {/* Reviews filters */}
+                    <div className="flex items-center gap-3 mb-5">
+                        <div className="relative flex-1 max-w-[400px]">
+                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                                <SearchIcon />
+                            </div>
+                            <input
+                                type="text"
+                                value={reviewsSearchInput}
+                                onChange={(e) => setReviewsSearchInput(e.target.value)}
+                                placeholder="Search by Order ID, Customer, or Partner..."
+                                className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                            />
+                        </div>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                    <line x1="16" y1="2" x2="16" y2="6" />
+                                    <line x1="8" y1="2" x2="8" y2="6" />
+                                    <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                            </div>
+                            <input
+                                type="date"
+                                value={reviewsFrom}
+                                onChange={(e) => { setReviewsFrom(e.target.value); setReviewsPage(1); }}
+                                className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                            />
+                        </div>
+                        <span className="text-[#94A3B8] font-medium">–</span>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                    <line x1="16" y1="2" x2="16" y2="6" />
+                                    <line x1="8" y1="2" x2="8" y2="6" />
+                                    <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                            </div>
+                            <input
+                                type="date"
+                                value={reviewsTo}
+                                onChange={(e) => { setReviewsTo(e.target.value); setReviewsPage(1); }}
+                                className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                            />
+                        </div>
+                    </div>
+
+                    {reviewsError && <p className="text-red-500 text-sm mb-4">{reviewsError}</p>}
+
+                    {/* Reviews list */}
+                    <div className="space-y-4">
+                        {reviewsLoading ? (
+                            Array.from({ length: 4 }).map((_, i) => (
+                                <div key={i} className="bg-white rounded-[16px] border border-[#F1F5F9] p-5">
+                                    <div className="flex items-start gap-3 mb-3">
+                                        <div className="w-10 h-10 rounded-full bg-slate-100 animate-pulse flex-shrink-0" />
+                                        <div className="flex-1 space-y-2">
+                                            <div className="w-32 h-4 bg-slate-100 animate-pulse rounded" />
+                                            <div className="w-full h-3 bg-slate-100 animate-pulse rounded" />
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2 mt-4">
+                                        <div className="flex-1 h-9 bg-slate-100 animate-pulse rounded-[8px]" />
+                                        <div className="flex-1 h-9 bg-slate-100 animate-pulse rounded-[8px]" />
+                                        <div className="flex-1 h-9 bg-slate-100 animate-pulse rounded-[8px]" />
+                                    </div>
+                                </div>
+                            ))
+                        ) : reviews.length === 0 ? (
+                            <div className="py-16 text-center text-[#94A3B8] text-sm">No reviews found</div>
+                        ) : (
+                            reviews.map((review) => {
+                                const name = review.userId?.fullName || review.userId?.email || 'User';
+                                const initials = (() => {
+                                    const parts = name.trim().split(' ');
+                                    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+                                    return name.slice(0, 2).toUpperCase();
+                                })();
+                                const photoPath = review.userId?.profileImage;
+                                const photoUrl = photoPath
+                                    ? photoPath.startsWith('http')
+                                        ? photoPath
+                                        : getMediaUrl(photoPath)
+                                    : null;
+                                const star = review.star || 0;
+
+                                return (
+                                    <div key={review._id} className="bg-white rounded-[16px] border border-[#F1F5F9] p-5">
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="flex items-start gap-3 flex-1 min-w-0">
+                                                {/* Avatar */}
+                                                <div className="w-10 h-10 rounded-full bg-[#FDC63A] flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                                    {photoUrl ? (
+                                                        <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <span className="text-[13px] font-bold text-[#0F172A]">{initials}</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-[15px] font-bold text-[#0F172A]">{name}</p>
+                                                    <p className="text-[13px] text-[#64748B] mt-1 leading-relaxed">{review.comment || '--'}</p>
+                                                </div>
+                                            </div>
+                                            {/* Stars */}
+                                            <div className="flex items-center gap-0.5 flex-shrink-0">
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg key={i} width="16" height="16" viewBox="0 0 24 24"
+                                                        fill={i < star ? '#F59E0B' : 'none'}
+                                                        stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        {/* Buttons */}
+                                        <div className="flex items-center gap-3 mt-4">
+                                            <button className="flex-1 py-2 border border-[#E2E8F0] text-[#475569] text-[13px] font-semibold rounded-[8px] hover:bg-slate-50 transition-colors cursor-pointer">
+                                                Reply
+                                            </button>
+                                            <button className="flex-1 py-2 border border-[#E2E8F0] text-[#475569] text-[13px] font-semibold rounded-[8px] hover:bg-slate-50 transition-colors cursor-pointer">
+                                                View Partner Reply
+                                            </button>
+                                            <button className="flex-1 py-2 bg-[#FDC63A] text-[#0F172A] text-[13px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
+                                                Order Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        )}
+                    </div>
+
+                    {/* Reviews pagination */}
+                    {!reviewsLoading && reviews.length > 0 && (
+                        <div className="mt-6 flex items-center justify-between">
+                            <p className="text-[14px] text-[#64748B]">
+                                Showing {reviewsPagination.totalCount === 0 ? 0 : (reviewsPagination.currentPage - 1) * LIMIT + 1} to{' '}
+                                {Math.min(reviewsPagination.currentPage * LIMIT, reviewsPagination.totalCount)} of{' '}
+                                {reviewsPagination.totalCount} Reviews
+                            </p>
+                            <div className="flex items-center gap-1">
+                                <button
+                                    onClick={() => setReviewsPage((p) => Math.max(1, p - 1))}
+                                    disabled={reviewsPagination.currentPage === 1}
+                                    className="w-8 h-8 flex items-center justify-center rounded border border-[#E2E8F0] text-[#64748B] text-[16px] hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                >‹</button>
+                                {Array.from({ length: reviewsPagination.totalPages }, (_, i) => i + 1)
+                                    .slice(
+                                        Math.max(0, reviewsPagination.currentPage - 2),
+                                        Math.max(3, reviewsPagination.currentPage + 1)
+                                    )
+                                    .map((p) => (
+                                        <button
+                                            key={p}
+                                            onClick={() => setReviewsPage(p)}
+                                            className={`w-8 h-8 flex items-center justify-center rounded text-[14px] font-semibold transition-colors ${
+                                                p === reviewsPagination.currentPage
+                                                    ? 'bg-[#FDC63A] text-[#0F172A]'
+                                                    : 'border border-[#E2E8F0] text-[#64748B] hover:bg-slate-50'
+                                            }`}
+                                        >{p}</button>
+                                    ))}
+                                <button
+                                    onClick={() => setReviewsPage((p) => Math.min(reviewsPagination.totalPages, p + 1))}
+                                    disabled={reviewsPagination.currentPage === reviewsPagination.totalPages || reviewsPagination.totalPages === 0}
+                                    className="w-8 h-8 flex items-center justify-center rounded border border-[#E2E8F0] text-[#64748B] text-[16px] hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                >›</button>
+                            </div>
+                        </div>
+                    )}
+                </>
             ) : (
                 <>
                     {/* Add New Support button */}
