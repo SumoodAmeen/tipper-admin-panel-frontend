@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPartnerById, fetchMaterialById, notifyPartner, blockPartner, fetchPartnerOrders, requestVerificationSelfie } from '../partnerApi';
+import { fetchPartnerById, fetchPartnerMaterials, notifyPartner, blockPartner, fetchPartnerOrders, requestVerificationSelfie } from '../partnerApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
 
@@ -157,12 +157,8 @@ const PartnerDetailPage = () => {
             try {
                 const data = await fetchPartnerById(id);
                 setPartner(data);
-                if (data.materials?.length) {
-                    const results = await Promise.allSettled(
-                        data.materials.map((mid) => fetchMaterialById(mid))
-                    );
-                    setMaterials(results.filter((r) => r.status === 'fulfilled').map((r) => r.value));
-                }
+                const mats = await fetchPartnerMaterials(id);
+                setMaterials(mats ?? []);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -454,7 +450,8 @@ const PartnerDetailPage = () => {
                                 {materials.map((mat) => {
                                     const name = mat.name || mat.materialName || 'Material';
                                     const category = mat.category?.name || mat.categoryName || '';
-                                    const imgUrl = mat.image ? getMediaUrl(mat.image) : null;
+                                    const imgUrl = mat.image?.startsWith('http') ? mat.image : mat.image ? getMediaUrl(mat.image) : null;
+                                    const hasPrice = mat.baseAmountPerUnit && mat.maxAmountPerUnit;
                                     return (
                                         <div key={mat._id} className="rounded-[10px] overflow-hidden border border-[#F1F5F9]">
                                             <div className="h-[100px] bg-slate-100">
@@ -469,6 +466,11 @@ const PartnerDetailPage = () => {
                                                     <span className="text-[10px] font-bold text-amber-600 uppercase">{category}</span>
                                                 )}
                                                 <p className="text-[13px] font-semibold text-[#0F172A] mt-0.5">{name}</p>
+                                                {hasPrice && (
+                                                    <p className="text-[11px] text-[#64748B] mt-1">
+                                                        ₹{mat.baseAmountPerUnit} – ₹{mat.maxAmountPerUnit}
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
                                     );
