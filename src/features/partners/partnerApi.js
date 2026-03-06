@@ -56,8 +56,8 @@ export const fetchMaterialById = async (id) => {
     return data.data;
 };
 
-export const fetchPartnerMaterials = async () => {
-    const response = await fetch(`${BASE_URL}/partner/materials`, {
+export const fetchPartnerMaterials = async (id) => {
+    const response = await fetch(`${BASE_URL}/partner/manage/${id}/materials`, {
         method: 'GET',
         headers: authHeaders(),
     });
@@ -68,7 +68,7 @@ export const fetchPartnerMaterials = async () => {
         throw new Error(data.message || 'Failed to fetch partner materials');
     }
 
-    return data.data;
+    return data.data.materials;
 };
 
 export const notifyPartner = async (id, { title, message }) => {

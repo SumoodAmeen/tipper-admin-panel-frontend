@@ -157,11 +157,8 @@ const PartnerDetailPage = () => {
             try {
                 const data = await fetchPartnerById(id);
                 setPartner(data);
-                if (data.materials?.length) {
-                    const allMaterials = await fetchPartnerMaterials();
-                    const partnerMaterialIds = new Set(data.materials.map(String));
-                    setMaterials(allMaterials.filter((m) => partnerMaterialIds.has(String(m._id))));
-                }
+                const mats = await fetchPartnerMaterials(id);
+                setMaterials(mats ?? []);
             } catch (err) {
                 setError(err.message);
             } finally {
