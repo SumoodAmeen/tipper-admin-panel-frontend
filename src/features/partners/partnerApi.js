@@ -102,6 +102,21 @@ export const blockPartner = async (id) => {
     return data;
 };
 
+export const activatePartner = async (id) => {
+    const response = await fetch(`${BASE_URL}/partner/manage/${id}/activate`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to activate partner');
+    }
+
+    return data;
+};
+
 export const fetchPendingVerifications = async ({ page = 1, limit = 12 } = {}) => {
     const params = new URLSearchParams({ page, limit });
 

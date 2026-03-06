@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPartnerById, fetchPartnerMaterials, notifyPartner, blockPartner, fetchPartnerOrders, requestVerificationSelfie } from '../partnerApi';
+import { fetchPartnerById, fetchPartnerMaterials, notifyPartner, blockPartner, activatePartner, fetchPartnerOrders, requestVerificationSelfie } from '../partnerApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
 
@@ -148,6 +148,10 @@ const PartnerDetailPage = () => {
     const [blocking, setBlocking] = useState(false);
     const [blockError, setBlockError] = useState('');
 
+    const [showActivateConfirm, setShowActivateConfirm] = useState(false);
+    const [activating, setActivating] = useState(false);
+    const [activateError, setActivateError] = useState('');
+
     const [requestingVerification, setRequestingVerification] = useState(false);
     const [verificationRequested, setVerificationRequested] = useState(false);
     const [verificationError, setVerificationError] = useState('');
@@ -214,6 +218,20 @@ const PartnerDetailPage = () => {
             setBlockError(err.message);
         } finally {
             setBlocking(false);
+        }
+    };
+
+    const handleActivate = async () => {
+        setActivating(true);
+        setActivateError('');
+        try {
+            await activatePartner(id);
+            setPartner((prev) => ({ ...prev, status: 'Active' }));
+            setShowActivateConfirm(false);
+        } catch (err) {
+            setActivateError(err.message);
+        } finally {
+            setActivating(false);
         }
     };
 
@@ -370,7 +388,17 @@ const PartnerDetailPage = () => {
                             </svg>
                             Personalized Notification
                         </button>
-                        {!isBlocked && (
+                        {isBlocked ? (
+                            <button
+                                onClick={() => setShowActivateConfirm(true)}
+                                className="flex items-center gap-2 px-4 py-2 border border-green-200 rounded-[8px] text-[13px] font-semibold text-green-600 hover:bg-green-50 transition-colors"
+                            >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                Activate Partner
+                            </button>
+                        ) : (
                             <button
                                 onClick={() => setShowBlockConfirm(true)}
                                 className="flex items-center gap-2 px-4 py-2 border border-red-200 rounded-[8px] text-[13px] font-semibold text-red-500 hover:bg-red-50 transition-colors"
@@ -766,6 +794,40 @@ const PartnerDetailPage = () => {
                                 </div>
                             </>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {/* Activate Confirmation */}
+            {showActivateConfirm && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-[16px] w-full max-w-[400px] shadow-xl p-6">
+                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </div>
+                        <h3 className="text-[18px] font-bold text-[#0F172A] text-center mb-2">Activate Partner</h3>
+                        <p className="text-[13px] text-[#64748B] text-center mb-5">
+                            Are you sure you want to activate <strong>{partner.name}</strong>? They will be able to accept new orders.
+                        </p>
+                        {activateError && <p className="text-red-500 text-[13px] mb-3 text-center">{activateError}</p>}
+                        <div className="flex items-center justify-center gap-3">
+                            <button
+                                onClick={() => setShowActivateConfirm(false)}
+                                disabled={activating}
+                                className="px-5 py-2 text-[14px] font-semibold text-[#475569] border border-[#E2E8F0] rounded-[8px] hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleActivate}
+                                disabled={activating}
+                                className="px-5 py-2 text-[14px] font-bold text-white bg-green-500 rounded-[8px] hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                {activating ? 'Activating...' : 'Activate Partner'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
