@@ -483,12 +483,12 @@ const PartnerDetailPage = () => {
                     <button
                         onClick={handleRequestVerification}
                         disabled={requestingVerification || verificationRequested}
-                        className={`w-full py-3 border border-[#E2E8F0] rounded-[10px] text-[14px] font-semibold bg-white transition-colors ${
+                        className={`w-full py-3 border rounded-[10px] text-[14px] font-bold transition-colors ${
                             verificationRequested
-                                ? 'text-green-600 border-green-200 cursor-default'
+                                ? 'bg-green-50 border-green-200 text-green-700 cursor-default'
                                 : requestingVerification
-                                ? 'text-[#64748B] opacity-60 cursor-not-allowed'
-                                : 'text-[#64748B] hover:bg-slate-50 cursor-pointer'
+                                ? 'bg-amber-50 border-[#FDC63A] text-[#0F172A] opacity-60 cursor-not-allowed'
+                                : 'bg-amber-50 border-[#FDC63A] text-[#0F172A] hover:bg-amber-100 cursor-pointer'
                         }`}
                     >
                         {verificationRequested
