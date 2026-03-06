@@ -57,6 +57,21 @@ export const blockCustomer = async (id, reason) => {
     return data;
 };
 
+export const activateCustomer = async (id) => {
+    const response = await fetch(`${BASE_URL}/profile/manage/users/${id}/activate`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to activate customer');
+    }
+
+    return data;
+};
+
 export const notifyCustomer = async (id, { title, message }) => {
     const response = await fetch(`${BASE_URL}/profile/manage/users/${id}/notify`, {
         method: 'POST',
