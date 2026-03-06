@@ -103,7 +103,7 @@ export const blockPartner = async (id) => {
 };
 
 export const activatePartner = async (id) => {
-    const response = await fetch(`${BASE_URL}/profile/manage/users/${id}/activate`, {
+    const response = await fetch(`${BASE_URL}/partner/manage/${id}/activate`, {
         method: 'PATCH',
         headers: authHeaders(),
     });
