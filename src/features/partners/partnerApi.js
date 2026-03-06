@@ -56,6 +56,21 @@ export const fetchMaterialById = async (id) => {
     return data.data;
 };
 
+export const fetchPartnerMaterials = async () => {
+    const response = await fetch(`${BASE_URL}/partner/materials`, {
+        method: 'GET',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch partner materials');
+    }
+
+    return data.data;
+};
+
 export const notifyPartner = async (id, { title, message }) => {
     const response = await fetch(`${BASE_URL}/partner/manage/${id}/notify`, {
         method: 'POST',
