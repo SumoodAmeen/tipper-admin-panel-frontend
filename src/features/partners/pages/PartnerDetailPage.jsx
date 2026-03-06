@@ -451,7 +451,6 @@ const PartnerDetailPage = () => {
                                     const name = mat.name || mat.materialName || 'Material';
                                     const category = mat.category?.name || mat.categoryName || '';
                                     const imgUrl = mat.image?.startsWith('http') ? mat.image : mat.image ? getMediaUrl(mat.image) : null;
-                                    const hasPrice = mat.baseAmountPerUnit && mat.maxAmountPerUnit;
                                     return (
                                         <div key={mat._id} className="rounded-[10px] overflow-hidden border border-[#F1F5F9]">
                                             <div className="h-[100px] bg-slate-100">
@@ -466,11 +465,7 @@ const PartnerDetailPage = () => {
                                                     <span className="text-[10px] font-bold text-amber-600 uppercase">{category}</span>
                                                 )}
                                                 <p className="text-[13px] font-semibold text-[#0F172A] mt-0.5">{name}</p>
-                                                {hasPrice && (
-                                                    <p className="text-[11px] text-[#64748B] mt-1">
-                                                        ₹{mat.baseAmountPerUnit} – ₹{mat.maxAmountPerUnit}
-                                                    </p>
-                                                )}
+                                                
                                             </div>
                                         </div>
                                     );
