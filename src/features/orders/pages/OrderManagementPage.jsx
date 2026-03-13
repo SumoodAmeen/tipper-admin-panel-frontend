@@ -61,14 +61,21 @@ const OrderManagementPage = () => {
     }, [searchInput]);
 
     useEffect(() => {
-        setLoading(true);
-        fetchOrders({ page, limit: LIMIT, search, status, from, to })
-            .then((data) => {
-                setOrders(data.orders ?? []);
+        const load = async () => {
+            setLoading(true);
+            try {
+                const data = await fetchOrders({ page, limit: LIMIT, search, status, from, to });
+                const excluded = ['bidding', 'requested', 'expired'];
+                const filtered = (data.orders ?? []).filter((o) => !excluded.includes(o.status));
+                setOrders(filtered);
                 setPagination(data.pagination ?? { totalCount: 0, totalPages: 1, currentPage: 1 });
-            })
-            .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        load();
     }, [page, search, status, from, to]);
 
     const handleStatusChange = (e) => {
@@ -216,8 +223,6 @@ const OrderManagementPage = () => {
                         className="appearance-none pl-4 pr-9 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white min-w-[140px] cursor-pointer"
                     >
                         <option value="">All</option>
-                        <option value="requested">Requested</option>
-                        <option value="bidding">Order Received</option>
                         <option value="assigned">Assigned</option>
                         <option value="confirmed">In Transit</option>
                         <option value="delivered">Delivered</option>
