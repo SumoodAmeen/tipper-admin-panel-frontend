@@ -106,7 +106,7 @@ const Navbar = () => {
             {/* Date */}
             <div className="flex items-center gap-2 text-[#64748B]">
                 <img src={calendar} alt="Calendar" className="w-[9.99px] h-[11.1px] object-contain" />
-                <span className="text-[14px] font-medium">{getFormattedDate()}</span>
+                <span className="text-[14px] text-[#64748B] font-medium">{getFormattedDate()}</span>
             </div>
 
             {/* Right — Bell + User */}
@@ -130,7 +130,7 @@ const Navbar = () => {
                         className="flex items-center gap-3 cursor-pointer"
                     >
                         <div className="text-right">
-                            <p className="text-[14px] font-bold text-[#0F172A] leading-tight">{displayName}</p>
+                            <p className="text-[14px] font-bold text-[#1C180C] leading-tight">{displayName}</p>
                             <p className="text-[12px] text-[#64748B] font-medium">{role}</p>
                         </div>
                         <div className="w-[38px] h-[38px] rounded-full bg-[#FDC63A] flex items-center justify-center flex-shrink-0 overflow-hidden">
