@@ -447,7 +447,7 @@ const PartnerDetailPage = () => {
                         ratingValue: overview?.stats?.averageRating,
                     },
                 ].map(({ label, value, suffix, isRating, ratingValue }) => (
-                    <div key={label} className="bg-white rounded-[12px] shadow-sm p-5">
+                    <div key={label} className="bg-white rounded-[12px] h-[110px] shadow-sm p-5">
                         <div className="flex items-center justify-between mb-3">
                             <p className="text-[14px] font-medium text-[#64748B]">{label}</p>
                         </div>
@@ -487,12 +487,12 @@ const PartnerDetailPage = () => {
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
                             </div>
-                            <h2 className="text-[16px] font-bold text-[#0F172A]">Partner Information</h2>
+                            <h2 className="text-[18px] font-bold text-[#0F172A]">Partner Information</h2>
                         </div>
                         <div className="grid grid-cols-2 gap-x-8 gap-y-5">
                             {/* Personal Details */}
                             <div>
-                                <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase mb-4">Personal Details</p>
+                                <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase mb-4">Personal Details</p>
                                 <div className="space-y-4">
                                     <InfoRow label="Full Name" value={partner.name} />
                                     <InfoRow
@@ -507,7 +507,7 @@ const PartnerDetailPage = () => {
                             </div>
                             {/* Vehicle & Documentation */}
                             <div>
-                                <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase mb-4">Vehicle & Documentation</p>
+                                <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase mb-4">Vehicle & Documentation</p>
                                 <div className="space-y-4">
                                     <InfoRow label="Driving Licence Number" value={partner.drivingLicenseNumber} />
                                     <InfoRow label="Vehicle Number" value={partner.vehicle?.registrationNumber} />
@@ -572,8 +572,8 @@ const PartnerDetailPage = () => {
                             verificationRequested
                                 ? 'bg-green-50 border-green-200 text-green-700 cursor-default'
                                 : requestingVerification
-                                ? 'bg-amber-50 border-[#FDC63A] text-[#0F172A] opacity-60 cursor-not-allowed'
-                                : 'bg-amber-50 border-[#FDC63A] text-[#0F172A] hover:bg-amber-100 cursor-pointer'
+                                ? 'bg-[#FDC63A4D] border-[#FDC63A] text-[#0F172A] opacity-60 cursor-not-allowed'
+                                : 'bg-[#FDC63A4D] border-[#FDC63A] text-[#0F172A] hover:bg-amber-100 cursor-pointer'
                         }`}
                     >
                         {verificationRequested
@@ -606,7 +606,7 @@ const PartnerDetailPage = () => {
                                         <polyline points="14 2 14 8 20 8" />
                                     </svg>
                                 </div>
-                                <h3 className="text-[14px] font-bold text-[#0F172A]">Documents</h3>
+                                <h3 className="text-[18px] font-bold text-[#0F172A]">Documents</h3>
                             </div>
                             {docs.map((doc) => (
                                 <DocumentRow key={doc.label} label={doc.label} path={doc.path} />
