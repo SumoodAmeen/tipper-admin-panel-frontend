@@ -143,11 +143,11 @@ const DashboardPage = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-[#F1F5F9]">
+                            <tr className="border-b border-[#E2E8F0]">
                                 {TABLE_COLS.map((col) => (
                                     <th
                                         key={col}
-                                        className="px-6 py-3 text-left text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase"
+                                        className="px-6 py-3 text-left text-[12px] font-bold text-[#64748B] tracking-widest uppercase"
                                     >
                                         {col}
                                     </th>
@@ -157,7 +157,7 @@ const DashboardPage = () => {
                         <tbody>
                             {ordersLoading ? (
                                 Array.from({ length: 4 }).map((_, i) => (
-                                    <tr key={i} className="border-b border-[#F8FAFC]">
+                                    <tr key={i} className="border-b border-[#E2E8F0]">
                                         {TABLE_COLS.map((col) => (
                                             <td key={col} className="px-6 py-4">
                                                 <span className="inline-block w-24 h-4 bg-slate-100 animate-pulse rounded" />
