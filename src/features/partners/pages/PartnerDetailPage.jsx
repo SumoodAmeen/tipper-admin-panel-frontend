@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchPartnerById, fetchPartnerMaterials, fetchPartnerOverview, notifyPartner, blockPartner, activatePartner, fetchPartnerOrders, requestVerificationSelfie } from '../partnerApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
+import notificationIcon from '../../../assets/partner/notification.png';
+import blockIcon from '../../../assets/partner/block.png';
 
 const PARTNER_STATUS_CONFIG = {
     Active: { label: 'ACTIVE', bg: 'bg-green-100', text: 'text-green-700' },
@@ -356,7 +358,7 @@ const PartnerDetailPage = () => {
             <div className="bg-white rounded-[12px] shadow-sm p-6 mb-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="w-[72px] h-[72px] rounded-full overflow-hidden bg-[#FDC63A] flex items-center justify-center flex-shrink-0">
+                        <div className="w-[96px] h-[96px] rounded-full overflow-hidden bg-[#FDC63A] flex items-center justify-center flex-shrink-0">
                             {photoUrl ? (
                                 <img src={photoUrl} alt={partner.name} className="w-full h-full object-cover" />
                             ) : (
@@ -365,8 +367,8 @@ const PartnerDetailPage = () => {
                         </div>
                         <div>
                             <div className="flex items-center gap-2.5 mb-1">
-                                <h1 className="text-[22px] font-bold text-[#0F172A]">{partner.name}</h1>
-                                <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${statusCfg.bg} ${statusCfg.text}`}>
+                                <h1 className="text-[30px] font-bold text-[#0F172A]">{partner.name}</h1>
+                                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${statusCfg.bg} ${statusCfg.text}`}>
                                     {statusCfg.label}
                                 </span>
                             </div>
@@ -378,19 +380,17 @@ const PartnerDetailPage = () => {
                                     <line x1="9" y1="3" x2="9" y2="21" />
                                     <line x1="15" y1="3" x2="15" y2="21" />
                                 </svg>
-                                <p className="text-[13px] text-[#64748B]">Partner ID: {partner.uniqueId}</p>
+                                <p className="text-[16px] text-[#64748B]">Partner ID: {partner.uniqueId}</p>
                             </div>
-                            <p className="text-[13px] text-[#64748B]">Last verified : {formatDate(partner.updatedAt)}</p>
+                            <p className="text-[16px] text-[#64748B]">Last verified : {formatDate(partner.updatedAt)}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setShowNotifyModal(true)}
-                            className="flex items-center gap-2 px-4 py-2 border border-[#E2E8F0] rounded-[8px] text-[13px] font-semibold text-[#475569] hover:bg-slate-50 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 border border-[#FDC63A] rounded-[8px] text-[14px] font-semibold text-[#0F172A] hover:bg-slate-50 transition-colors"
                         >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polygon points="3 11 22 2 13 21 11 13 3 11" />
-                            </svg>
+                            <img src={notificationIcon} alt="notification" width="15" height="14" />
                             Personalized Notification
                         </button>
                         {isBlocked ? (
@@ -406,12 +406,9 @@ const PartnerDetailPage = () => {
                         ) : (
                             <button
                                 onClick={() => setShowBlockConfirm(true)}
-                                className="flex items-center gap-2 px-4 py-2 border border-red-200 rounded-[8px] text-[13px] font-semibold text-red-500 hover:bg-red-50 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 border border-[#FF5C5C] rounded-[8px] text-[13px] font-semibold text-[#DC2626] bg-[#FEF2F2] hover:bg-red-50 transition-colors"
                             >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-                                </svg>
+                                <img src={blockIcon} alt="block" width="15" height="15" />
                                 Block Partner
                             </button>
                         )}
@@ -427,33 +424,17 @@ const PartnerDetailPage = () => {
                         value: overview
                             ? `₹${Number(overview.stats.totalAmountEarned).toLocaleString('en-IN')}`
                             : null,
-                        icon: (
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="12" y1="1" x2="12" y2="23" />
-                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                            </svg>
-                        ),
                     },
                     {
                         label: 'Daily Average Earnings',
                         value: overview
                             ? `₹${Number(overview.stats.dailyAverageEarnings).toLocaleString('en-IN')}`
                             : null,
-                        icon: (
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                            </svg>
-                        ),
                     },
                     {
                         label: 'Completed Deliveries',
                         value: overview ? overview.stats.completedDeliveries : null,
                         suffix: 'Orders',
-                        icon: (
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M5 12h14" /><path d="M12 5l7 7-7 7" />
-                            </svg>
-                        ),
                     },
                     {
                         label: 'Partner Rating',
@@ -464,19 +445,11 @@ const PartnerDetailPage = () => {
                             : null,
                         isRating: true,
                         ratingValue: overview?.stats?.averageRating,
-                        icon: (
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                            </svg>
-                        ),
                     },
-                ].map(({ label, value, suffix, isRating, ratingValue, icon }) => (
+                ].map(({ label, value, suffix, isRating, ratingValue }) => (
                     <div key={label} className="bg-white rounded-[12px] shadow-sm p-5">
                         <div className="flex items-center justify-between mb-3">
-                            <p className="text-[12px] font-semibold text-[#64748B]">{label}</p>
-                            <div className="w-8 h-8 rounded-[8px] bg-amber-50 flex items-center justify-center">
-                                {icon}
-                            </div>
+                            <p className="text-[14px] font-medium text-[#64748B]">{label}</p>
                         </div>
                         {value === null ? (
                             <div className="h-8 w-24 bg-slate-100 animate-pulse rounded" />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchPartners } from '../partnerApi';
+import excelIcon from '../../../assets/partner/excel.png';
 
 const STATUS_CONFIG = {
     Active: { label: 'Active', bg: 'bg-green-50', text: 'text-green-600' },
@@ -129,13 +130,7 @@ const PartnerManagementPage = () => {
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-[30px] font-bold text-[#0F172A]">Partner Management</h1>
                 <button className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <line x1="3" y1="9" x2="21" y2="9" />
-                        <line x1="3" y1="15" x2="21" y2="15" />
-                        <line x1="9" y1="3" x2="9" y2="21" />
-                        <line x1="15" y1="3" x2="15" y2="21" />
-                    </svg>
+                    <img src={excelIcon} alt="excel" width="16" height="16" />
                     Export as XL Sheet
                 </button>
             </div>
@@ -157,7 +152,7 @@ const PartnerManagementPage = () => {
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         placeholder="Search by Partner ID, Name, or Mobile N..."
-                        className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                        className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
                     />
                 </div>
 
@@ -175,7 +170,7 @@ const PartnerManagementPage = () => {
                         type="date"
                         value={from}
                         onChange={handleFromChange}
-                        className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                        className={`pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white ${from ? 'text-[#475569]' : 'text-[#6B7280]'}`}
                     />
                 </div>
 
@@ -195,7 +190,7 @@ const PartnerManagementPage = () => {
                         type="date"
                         value={to}
                         onChange={handleToChange}
-                        className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                        className={`pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white ${to ? 'text-[#475569]' : 'text-[#6B7280]'}`}
                     />
                 </div>
 
@@ -221,9 +216,9 @@ const PartnerManagementPage = () => {
             {/* Table */}
             <div className="bg-white rounded-[12px] shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full border border-[#E2E8F0]">
                         <thead>
-                            <tr className="border-b border-[#F1F5F9]">
+                            <tr className="border-b border-[#E2E8F0]">
                                 {TABLE_COLS.map((col) => (
                                     <th
                                         key={col}
