@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { fetchVehicles, approveOrder, rejectOrder, changeOrderVehicle } from '../bidApi';
 import { getMediaUrl } from '../../../config/api';
+import directionIcon from '../../../assets/bids/direction.png';
+import clockIcon from '../../../assets/bids/clock.png';
 
 const formatSchedule = (dateStr, timeStr) => {
     if (!dateStr) return '--';
@@ -71,11 +73,11 @@ const VerifyRequestModal = ({ order, onClose, onActionComplete }) => {
 
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-[16px] w-[90%] max-w-[560px] shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-[16px] w-full max-w-[540px] shadow-xl max-h-[90vh] overflow-y-auto">
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-[#F1F5F9]">
-                    <h2 className="text-[18px] font-bold text-[#0F172A]">Verify Request</h2>
+                    <h2 className="text-[20px] font-bold text-[#0F172A]">Verify Request</h2>
                     <button
                         onClick={onClose}
                         className="text-[#94A3B8] hover:text-[#475569] transition-colors"
@@ -92,17 +94,15 @@ const VerifyRequestModal = ({ order, onClose, onActionComplete }) => {
                     {/* ORDER DETAILS */}
                     <div>
                         <div className="flex items-center justify-between mb-3">
-                            <p className="text-[11px] font-bold text-[#94A3B8] tracking-widest uppercase">Order Details</p>
+                            <p className="text-[14px] font-bold text-[#64748B] tracking-widest uppercase">Order Details</p>
                             {lat && lng && (
                                 <a
                                     href={`https://www.google.com/maps?q=${lat},${lng}`}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center gap-1.5 px-3 py-1.5 border border-[#E2E8F0] rounded-[8px] text-[13px] font-semibold text-[#475569] hover:bg-slate-50 transition-colors"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 border border-[#E2E8F0] rounded-[8px] text-[14px] font-semibold text-[#0F172A] hover:bg-slate-50 transition-colors"
                                 >
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <polygon points="3 11 22 2 13 21 11 13 3 11" />
-                                    </svg>
+                                    <img src={directionIcon} alt="direction" width="10.5" height="10.5" />
                                     Direction
                                 </a>
                             )}
@@ -110,7 +110,7 @@ const VerifyRequestModal = ({ order, onClose, onActionComplete }) => {
 
                         <div className="flex items-start gap-4">
                             {/* Material image */}
-                            <div className="w-[68px] h-[68px] rounded-[10px] overflow-hidden flex-shrink-0 bg-slate-100">
+                            <div className="w-[78px] h-[78px] rounded-[10px] overflow-hidden flex-shrink-0 bg-slate-100">
                                 {imgUrl ? (
                                     <img src={imgUrl} alt={material?.materialName} className="w-full h-full object-cover" />
                                 ) : (
@@ -120,22 +120,19 @@ const VerifyRequestModal = ({ order, onClose, onActionComplete }) => {
 
                             {/* Info */}
                             <div className="flex-1 min-w-0">
-                                <p className="text-[15px] font-bold text-[#0F172A]">{material?.materialName ?? '--'}</p>
+                                <p className="text-[18px] font-bold text-[#0F172A]">{material?.materialName ?? '--'}</p>
                                 <div className="flex items-center gap-2 mt-1">
-                                    <span className="inline-block bg-[#F1F5F9] text-[#475569] text-[11px] font-semibold px-2 py-0.5 rounded uppercase tracking-wide">
+                                    <span className="inline-block bg-[#E2E8F0] text-[#475569] text-[12px] font-semibold px-2 py-0.5 rounded uppercase tracking-wide">
                                         {material?.materialName ?? ''}
                                     </span>
                                     <span className="text-[#CBD5E1]">·</span>
-                                    <span className="text-[13px] text-[#64748B]">
+                                    <span className="text-[14px] text-[#475569]">
                                         Selected Vehicle : {vehicle?.vehicleName ?? '--'}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-1.5 mt-1.5">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <polyline points="12 6 12 12 16 14" />
-                                    </svg>
-                                    <span className="text-[12px] text-[#94A3B8]">
+                                    <img src={clockIcon} alt="clock" width="13" height="13" />
+                                    <span className="text-[14px] font-semibold text-[#000000]">
                                         {formatSchedule(scheduledDate, scheduledTime)}
                                     </span>
                                 </div>
@@ -145,13 +142,13 @@ const VerifyRequestModal = ({ order, onClose, onActionComplete }) => {
 
                     {/* Change Vehicle Type */}
                     <div>
-                        <p className="text-[13px] text-[#475569] font-medium mb-2">Change Vehicle Type</p>
+                        <p className="text-[14px] text-[#334155] font-medium mb-2">Change Vehicle Type</p>
                         <div className="relative">
                             <select
                                 value={selectedVehicleId}
                                 onChange={(e) => setSelectedVehicleId(e.target.value)}
                                 disabled={vehiclesLoading || loading}
-                                className="w-full appearance-none pl-4 pr-9 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white cursor-pointer disabled:opacity-60"
+                                className="w-full appearance-none pl-4 pr-9 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[16px] text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white cursor-pointer disabled:opacity-60"
                             >
                                 {vehiclesLoading ? (
                                     <option>Loading vehicles...</option>
@@ -171,30 +168,30 @@ const VerifyRequestModal = ({ order, onClose, onActionComplete }) => {
 
                     {/* CUSTOMER DETAILS */}
                     <div>
-                        <p className="text-[11px] font-bold text-[#94A3B8] tracking-widest uppercase mb-3">Customer Details</p>
+                        <p className="text-[14px] font-bold text-[#64748B] tracking-widest uppercase mb-3">Customer Details</p>
                         <div className="bg-[#F8FAFC] rounded-[10px] p-4 grid grid-cols-2 gap-4">
                             <div>
-                                <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Customer Name</p>
-                                <p className="text-[14px] font-semibold text-[#0F172A]">{userId?.fullName ?? '--'}</p>
+                                <p className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Customer Name</p>
+                                <p className="text-[16px] font-semibold text-[#0F172A]">{userId?.fullName ?? '--'}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Customer ID</p>
-                                <p className="text-[14px] font-semibold text-[#0F172A]">
+                                <p className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Customer ID</p>
+                                <p className="text-[16px] font-semibold text-[#0F172A]">
                                     #{userId?._id?.slice(-8).toUpperCase() ?? '--'}
                                 </p>
                             </div>
                             <div>
-                                <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Email</p>
-                                <p className="text-[14px] font-semibold text-[#0F172A] break-all">{userId?.email ?? '--'}</p>
+                                <p className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Email</p>
+                                <p className="text-[16px] font-semibold text-[#0F172A] break-all">{userId?.email ?? '--'}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Delivery Address</p>
+                                <p className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Delivery Address</p>
                                 <div className="flex items-start gap-1.5">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 flex-shrink-0">
                                         <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" />
                                         <circle cx="12" cy="10" r="3" />
                                     </svg>
-                                    <p className="text-[13px] text-[#475569] leading-snug">{address || '--'}</p>
+                                    <p className="text-[16px] text-[#475569] leading-snug">{address || '--'}</p>
                                 </div>
                             </div>
                         </div>
@@ -209,14 +206,14 @@ const VerifyRequestModal = ({ order, onClose, onActionComplete }) => {
                         <button
                             onClick={handleCancelRequest}
                             disabled={loading}
-                            className="flex-1 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] font-semibold text-[#475569] hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex-1 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[16px] font-bold text-[#334155] hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Cancel Request
                         </button>
                         <button
                             onClick={handleSendToBid}
                             disabled={loading || vehiclesLoading}
-                            className="flex-1 py-2.5 bg-[#FDC63A] rounded-[8px] text-[14px] font-bold text-[#0F172A] hover:bg-[#fbbf24] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex-1 py-2.5 bg-[#FDC63A] rounded-[8px] text-[16px] font-bold text-[#0F172A] hover:bg-[#fbbf24] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? 'Processing...' : 'Send to Bid'}
                         </button>

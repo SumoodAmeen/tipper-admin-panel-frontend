@@ -130,19 +130,19 @@ const BidManagementPage = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <span className="absolute top-5 left-5 bg-[#FDC63A] text-[#0F172A] text-[10px] font-bold px-2.5 py-[3px] rounded-full uppercase tracking-wide">
+                                    <span className="absolute top-6 left-6 bg-[#FDC63A] text-[#1C180C] text-[10px] font-bold px-2.5 py-[3px] rounded-full uppercase tracking-wide">
                                         Active
                                     </span>
                                 </div>
 
                                 {/* Body */}
                                 <div className="py-4 px-[16px]">
-                                    <p className="text-[14px] font-bold text-[#0F172A] truncate mb-3">
+                                    <p className="text-[16px] font-bold text-[#0F172A] truncate mb-3">
                                         {name}
                                     </p>
                                     <button
                                         onClick={() => setSelectedOrder(order)}
-                                        className="w-full py-2 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
+                                        className="w-full py-2 bg-[#FDC63A] text-[#1C180C] text-[16px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
                                     >
                                         Attend
                                     </button>
