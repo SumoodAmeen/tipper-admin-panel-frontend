@@ -28,12 +28,12 @@ const Sidebar = () => {
 
             {/* Logo */}
             <div className="px-5 py-6 flex items-center gap-3">
-                <div className="bg-[#FDC63A] rounded-[8px] w-[40px] h-[40px] flex items-center justify-center flex-shrink-0">
-                    <img src={logo} alt="Tipper" className="w-8 h-8 object-contain" />
+                <div className="bg-[#FDC63A] rounded-[8px] w-[40.02px] h-[40px] flex items-center justify-center flex-shrink-0">
+                    <img src={logo} alt="Tipper" className="w-[40px] h-[40px] object-contain" />
                 </div>
                 <div>
-                    <p className="text-white font-bold text-[18px] leading-tight">Tipper App</p>
-                    <p className="text-[#8a8a6a] text-[12px] font-semibold tracking-widest uppercase">Admin Panel</p>
+                    <p className="text-[#FFFFFF] font-bold text-[18px] leading-tight">Tipper App</p>
+                    <p className="text-[#94A3B8] text-[12px] font-semibold tracking-widest uppercase">Admin Panel</p>
                 </div>
             </div>
 
@@ -45,8 +45,8 @@ const Sidebar = () => {
                         to={path}
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-4 py-3 rounded-[8px] text-[16px] font-semibold transition-colors ${isActive
-                                ? 'bg-[#FDC63A] text-[#0F172A]'
-                                : 'text-[#d4d4aa] hover:bg-white/10 hover:text-white'
+                                ? 'bg-[#FDC63A] text-[#1C180C]'
+                                : 'text-[#CBD5E1] hover:bg-white/10 hover:text-white'
                             }`
                         }
                     >
