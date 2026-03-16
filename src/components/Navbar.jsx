@@ -93,7 +93,7 @@ const Navbar = () => {
         const refreshToken = localStorage.getItem('admin_refresh_token');
         try {
             if (refreshToken) await adminLogout(refreshToken);
-        } catch (_) {
+        } catch {
             // Proceed with local logout even if API call fails
         }
         authLogout();

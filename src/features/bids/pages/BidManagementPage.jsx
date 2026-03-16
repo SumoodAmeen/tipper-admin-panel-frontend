@@ -26,14 +26,17 @@ const BidManagementPage = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     useEffect(() => {
-        setLoading(true);
-        fetchOrders({ page, limit: LIMIT, status: 'requested' })
-            .then((data) => {
-                setOrders(data.orders ?? []);
-                setPagination(data.pagination ?? { totalCount: 0, totalPages: 1, currentPage: 1 });
-            })
-            .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
+        const load = () => {
+            setLoading(true);
+            fetchOrders({ page, limit: LIMIT, status: 'requested' })
+                .then((data) => {
+                    setOrders(data.orders ?? []);
+                    setPagination(data.pagination ?? { totalCount: 0, totalPages: 1, currentPage: 1 });
+                })
+                .catch((err) => setError(err.message))
+                .finally(() => setLoading(false));
+        };
+        load();
     }, [page]);
 
     const handleActionComplete = (orderId) => {

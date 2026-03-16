@@ -39,34 +39,37 @@ const Sidebar = () => {
 
             {/* Nav */}
             <nav className="flex-1 px-3 pt-2 space-y-0.5">
-                {navItems.map(({ label, imgIcon, lucideIcon: LucideIcon, path }) => (
-                    <NavLink
-                        key={path}
-                        to={path}
-                        className={({ isActive }) =>
-                            `flex items-center gap-3 px-4 py-3 rounded-[8px] text-[16px] font-semibold transition-colors ${isActive
-                                ? 'bg-[#FDC63A] text-[#1C180C]'
-                                : 'text-[#CBD5E1] hover:bg-white/10 hover:text-white'
-                            }`
-                        }
-                    >
-                        {({ isActive }) => (
-                            <>
-                                {imgIcon ? (
-                                    <img
-                                        src={imgIcon}
-                                        alt={label}
-                                        className="w-[18px] h-[18px] object-contain"
-                                        style={{ filter: isActive ? 'brightness(0)' : 'brightness(0) invert(1)' }}
-                                    />
-                                ) : (
-                                    <LucideIcon size={18} strokeWidth={2} />
-                                )}
-                                {label}
-                            </>
-                        )}
-                    </NavLink>
-                ))}
+                {navItems.map(({ label, imgIcon, lucideIcon, path }) => {
+                    const LucideIcon = lucideIcon;
+                    return (
+                        <NavLink
+                            key={path}
+                            to={path}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 px-4 py-3 rounded-[8px] text-[16px] font-semibold transition-colors ${isActive
+                                    ? 'bg-[#FDC63A] text-[#1C180C]'
+                                    : 'text-[#CBD5E1] hover:bg-white/10 hover:text-white'
+                                }`
+                            }
+                        >
+                            {({ isActive }) => (
+                                <>
+                                    {imgIcon ? (
+                                        <img
+                                            src={imgIcon}
+                                            alt={label}
+                                            className="w-[18px] h-[18px] object-contain"
+                                            style={{ filter: isActive ? 'brightness(0)' : 'brightness(0) invert(1)' }}
+                                        />
+                                    ) : (
+                                        <LucideIcon size={18} strokeWidth={2} />
+                                    )}
+                                    {label}
+                                </>
+                            )}
+                        </NavLink>
+                    );
+                })}
             </nav>
         </aside>
     );

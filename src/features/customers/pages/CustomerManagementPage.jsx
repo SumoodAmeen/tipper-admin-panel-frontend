@@ -51,14 +51,17 @@ const CustomerManagementPage = () => {
     }, [searchInput]);
 
     useEffect(() => {
-        setLoading(true);
-        fetchCustomers({ page, limit: LIMIT, search, status, from, to })
-            .then((data) => {
-                setCustomers(data.users);
-                setPagination(data.pagination);
-            })
-            .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
+        const load = () => {
+            setLoading(true);
+            fetchCustomers({ page, limit: LIMIT, search, status, from, to })
+                .then((data) => {
+                    setCustomers(data.users);
+                    setPagination(data.pagination);
+                })
+                .catch((err) => setError(err.message))
+                .finally(() => setLoading(false));
+        };
+        load();
     }, [page, search, status, from, to]);
 
     const handleStatusChange = (e) => {

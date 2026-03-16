@@ -53,14 +53,17 @@ const PartnerManagementPage = () => {
     }, [searchInput]);
 
     useEffect(() => {
-        setLoading(true);
-        fetchPartners({ page, limit: LIMIT, search, type, from, to })
-            .then((data) => {
-                setPartners(data.partners);
-                setPagination(data.pagination);
-            })
-            .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
+        const load = () => {
+            setLoading(true);
+            fetchPartners({ page, limit: LIMIT, search, type, from, to })
+                .then((data) => {
+                    setPartners(data.partners);
+                    setPagination(data.pagination);
+                })
+                .catch((err) => setError(err.message))
+                .finally(() => setLoading(false));
+        };
+        load();
     }, [page, search, type, from, to]);
 
     const handleTypeChange = (e) => {
