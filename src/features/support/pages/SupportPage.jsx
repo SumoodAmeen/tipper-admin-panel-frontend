@@ -411,10 +411,6 @@ const SupportPage = () => {
     const [reviewsLoading, setReviewsLoading] = useState(false);
     const [reviewsError, setReviewsError] = useState('');
     const [reviewsPage, setReviewsPage] = useState(1);
-    const [reviewsSearchInput, setReviewsSearchInput] = useState('');
-    const [reviewsSearch, setReviewsSearch] = useState('');
-    const [reviewsFrom, setReviewsFrom] = useState('');
-    const [reviewsTo, setReviewsTo] = useState('');
 
     const loadTickets = async (p = page) => {
         setLoading(true);
@@ -449,25 +445,17 @@ const SupportPage = () => {
     }, [page]);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setReviewsSearch(reviewsSearchInput);
-            setReviewsPage(1);
-        }, 400);
-        return () => clearTimeout(timer);
-    }, [reviewsSearchInput]);
-
-    useEffect(() => {
         if (activeTab !== 'reviews') return;
         setReviewsLoading(true);
         setReviewsError('');
-        fetchRatings({ page: reviewsPage, limit: LIMIT, search: reviewsSearch, from: reviewsFrom, to: reviewsTo })
+        fetchRatings({ page: reviewsPage, limit: LIMIT })
             .then((data) => {
                 setReviews(data.ratings);
                 setReviewsPagination(data.pagination);
             })
             .catch((err) => setReviewsError(err.message))
             .finally(() => setReviewsLoading(false));
-    }, [activeTab, reviewsPage, reviewsSearch, reviewsFrom, reviewsTo]);
+    }, [activeTab, reviewsPage]);
 
     const handleCreated = () => {
         setShowAddModal(false);
@@ -539,7 +527,7 @@ const SupportPage = () => {
                                 className={`px-4 py-2.5 text-[14px] font-semibold capitalize transition-colors cursor-pointer border-b-2 -mb-px ${
                                     activeTab === tab
                                         ? 'border-[#FDC63A] text-[#0F172A]'
-                                        : 'border-transparent text-[#94A3B8] hover:text-[#475569]'
+                                        : 'border-transparent text-[#64748B] hover:text-[#0F172A]'
                                 }`}
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -551,55 +539,6 @@ const SupportPage = () => {
 
             {activeTab === 'reviews' ? (
                 <>
-                    {/* Reviews filters */}
-                    <div className="flex items-center gap-3 mb-5">
-                        <div className="relative flex-1 max-w-[400px]">
-                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
-                                <SearchIcon />
-                            </div>
-                            <input
-                                type="text"
-                                value={reviewsSearchInput}
-                                onChange={(e) => setReviewsSearchInput(e.target.value)}
-                                placeholder="Search by Order ID, Customer, or Partner..."
-                                className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
-                            />
-                        </div>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                    <line x1="16" y1="2" x2="16" y2="6" />
-                                    <line x1="8" y1="2" x2="8" y2="6" />
-                                    <line x1="3" y1="10" x2="21" y2="10" />
-                                </svg>
-                            </div>
-                            <input
-                                type="date"
-                                value={reviewsFrom}
-                                onChange={(e) => { setReviewsFrom(e.target.value); setReviewsPage(1); }}
-                                className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
-                            />
-                        </div>
-                        <span className="text-[#94A3B8] font-medium">–</span>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                    <line x1="16" y1="2" x2="16" y2="6" />
-                                    <line x1="8" y1="2" x2="8" y2="6" />
-                                    <line x1="3" y1="10" x2="21" y2="10" />
-                                </svg>
-                            </div>
-                            <input
-                                type="date"
-                                value={reviewsTo}
-                                onChange={(e) => { setReviewsTo(e.target.value); setReviewsPage(1); }}
-                                className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
-                            />
-                        </div>
-                    </div>
-
                     {reviewsError && <p className="text-red-500 text-sm mb-4">{reviewsError}</p>}
 
                     {/* Reviews list */}
@@ -730,9 +669,9 @@ const SupportPage = () => {
                     <div className="flex justify-end mb-5">
                         <button
                             onClick={() => setShowAddModal(true)}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[10px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
+                            className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC638] text-[#1C180C] text-[16px] font-bold rounded-[10px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
                         >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="12" cy="12" r="10" />
                                 <line x1="12" y1="8" x2="12" y2="16" />
                                 <line x1="8" y1="12" x2="16" y2="12" />
@@ -771,14 +710,14 @@ const SupportPage = () => {
                                 return (
                                     <div
                                         key={ticket._id}
-                                        className="bg-white rounded-[16px] border border-[#F1F5F9] p-4 flex items-center gap-4"
+                                        className="bg-white rounded-[12px] border border-[#F1F5F9] p-[21px] flex items-center gap-14"
                                     >
                                         {/* Material image */}
                                         {imgUrl ? (
                                             <img
                                                 src={imgUrl}
                                                 alt={ticket.materialName}
-                                                className="w-14 h-14 object-cover rounded-[10px] flex-shrink-0"
+                                                className="w-[78px] h-[78px] object-cover rounded-[8px] flex-shrink-0"
                                             />
                                         ) : (
                                             <div className="w-14 h-14 bg-slate-100 rounded-[10px] flex-shrink-0" />
@@ -786,19 +725,19 @@ const SupportPage = () => {
 
                                         {/* Order ID */}
                                         <div className="w-[160px] flex-shrink-0">
-                                            <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase">Order ID</p>
-                                            <p className="text-[14px] font-bold text-[#0F172A] mt-0.5">#{ticket.orderNumber}</p>
+                                            <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase">Order ID</p>
+                                            <p className="text-[16px] font-bold text-[#0F172A] mt-0.5">#{ticket.orderNumber}</p>
                                         </div>
 
                                         {/* Material name */}
                                         <div className="w-[140px] flex-shrink-0">
-                                            <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase">Material Name</p>
-                                            <p className="text-[14px] font-semibold text-[#0F172A] mt-0.5">{ticket.materialName || '--'}</p>
+                                            <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase">Material Name</p>
+                                            <p className="text-[16px] font-semibold text-[#0F172A] mt-0.5">{ticket.materialName || '--'}</p>
                                         </div>
 
                                         {/* Support Category */}
                                         <div className="flex-1">
-                                            <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase">Support Category</p>
+                                            <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase">Support Category</p>
                                             <div className="mt-1">
                                                 {categoryName ? (
                                                     <span className={`px-2.5 py-1 rounded-full text-[12px] font-semibold capitalize ${color.bg} ${color.text}`}>
@@ -814,13 +753,13 @@ const SupportPage = () => {
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             <button
                                                 onClick={() => setSummaryModal({ ticketId: ticket._id, hasSummary: ticket.hasSummary })}
-                                                className="px-4 py-2 border border-[#E2E8F0] text-[#475569] text-[13px] font-semibold rounded-[8px] hover:bg-slate-50 transition-colors cursor-pointer whitespace-nowrap"
+                                                className="px-4 py-2 border border-[#E2E8F0] text-[#475569] text-[14px] font-semibold rounded-[8px] hover:bg-slate-50 transition-colors cursor-pointer whitespace-nowrap"
                                             >
                                                 {ticket.hasSummary ? 'View Summary' : 'Enter Summary'}
                                             </button>
                                             <button
                                                 onClick={() => setOrderDetailId(ticket.orderId)}
-                                                className="px-4 py-2 bg-[#FDC63A] text-[#0F172A] text-[13px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer whitespace-nowrap"
+                                                className="px-4 py-2 bg-[#FDC63A] text-[#1C180C] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer whitespace-nowrap"
                                             >
                                                 View Order Details
                                             </button>
