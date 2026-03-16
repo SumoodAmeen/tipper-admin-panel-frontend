@@ -99,7 +99,7 @@ const DriverVerificationPage = () => {
     return (
         <div>
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-[28px] font-bold text-[#0F172A]">Driver Verification</h1>
+                <h1 className="text-[30px] font-bold text-[#0F172A]">Driver Verification</h1>
             </div>
 
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
@@ -138,14 +138,14 @@ const DriverVerificationPage = () => {
                                         {getInitials(driver.name)}
                                     </div>
                                 )}
-                                <p className="text-[15px] font-bold text-[#0F172A] text-center">{driver.name}</p>
-                                <p className="text-[12px] text-[#64748B]">Partner ID : #{driver.uniqueId}</p>
+                                <p className="text-[18px] font-bold text-[#0F172A] text-center">{driver.name}</p>
+                                <p className="text-[12px] text-[#334155]">Partner ID : #{driver.uniqueId}</p>
                                 <button
                                     onClick={() => {
                                         setSelectedDriver(driver);
                                         setApproveError('');
                                     }}
-                                    className="w-full py-2 bg-[#FDC63A] text-[#0F172A] text-[13px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors uppercase tracking-wide cursor-pointer"
+                                    className="w-full py-2 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors uppercase tracking-wide cursor-pointer"
                                 >
                                     Verify
                                 </button>
