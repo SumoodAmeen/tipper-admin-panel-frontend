@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchCustomerById, blockCustomer, activateCustomer, notifyCustomer, fetchCustomerOrders } from '../customerApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
+import notificationIcon from '../../../assets/customer/notification.png';
+import blockIcon from '../../../assets/customer/block.png';
+import customerCardIcon from '../../../assets/customer/customer_card.png';
 
 const CUSTOMER_STATUS_CONFIG = {
     Active: { label: 'ACTIVE', bg: 'bg-green-100', text: 'text-green-700' },
@@ -269,7 +272,7 @@ const CustomerDetailPage = () => {
             </button>
 
             {/* Header Card */}
-            <div className="bg-white rounded-[12px] shadow-sm p-6 mb-6">
+            <div className="bg-white rounded-[12px] shadow-sm p-8 mb-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="w-[72px] h-[72px] rounded-full overflow-hidden bg-[#FDC63A] flex items-center justify-center flex-shrink-0">
@@ -281,28 +284,23 @@ const CustomerDetailPage = () => {
                         </div>
                         <div>
                             <div className="flex items-center gap-2.5 mb-1">
-                                <h1 className="text-[22px] font-bold text-[#0F172A]">{displayName}</h1>
-                                <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${statusCfg.bg} ${statusCfg.text}`}>
+                                <h1 className="text-[30px] font-bold text-[#0F172A]">{displayName}</h1>
+                                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${statusCfg.bg} ${statusCfg.text}`}>
                                     {statusCfg.label}
                                 </span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                                <p className="text-[13px] text-[#64748B]">Customer ID: {getCustomerId(customer)}</p>
+                                <img src={customerCardIcon} alt="customer card" width="15" height="12" />
+                                <p className="text-[16px] text-[#64748B]">Customer ID: {getCustomerId(customer)}</p>
                             </div>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setShowNotifyModal(true)}
-                            className="flex items-center gap-2 px-4 py-2 border border-[#E2E8F0] rounded-[8px] text-[13px] font-semibold text-[#475569] hover:bg-slate-50 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 border border-[#FDC63A] rounded-[8px] text-[14px] font-semibold text-[#0F172A] hover:bg-slate-50 transition-colors"
                         >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polygon points="3 11 22 2 13 21 11 13 3 11" />
-                            </svg>
+                            <img src={notificationIcon} alt="notification" width="18" height="15" />
                             Personalized Notification
                         </button>
                         {isBlocked ? (
@@ -318,12 +316,9 @@ const CustomerDetailPage = () => {
                         ) : (
                             <button
                                 onClick={() => setShowBlockConfirm(true)}
-                                className="flex items-center gap-2 px-4 py-2 border border-red-200 rounded-[8px] text-[13px] font-semibold text-red-500 hover:bg-red-50 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 border border-[#FF5C5C] rounded-[8px] text-[14px] font-semibold text-[#DC2626] bg-[#FEF2F2] hover:bg-red-50 transition-colors"
                             >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-                                </svg>
+                                <img src={blockIcon} alt="block" width="14" height="14" />
                                 Block Customer
                             </button>
                         )}
@@ -333,21 +328,21 @@ const CustomerDetailPage = () => {
 
             {/* Personal Details */}
             <div className="bg-white rounded-[12px] shadow-sm p-6 mb-6">
-                <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase mb-5">Personal Details</p>
+                <p className="text-[14px] font-bold text-[#64748B] tracking-widest uppercase mb-5">Personal Details</p>
                 <div className="grid grid-cols-4 gap-6">
                     {/* Mobile Number */}
                     <div>
-                        <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase mb-1.5">Mobile Number</p>
+                        <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase mb-1.5">Mobile Number</p>
                         <p className="text-[16px] font-bold text-[#0F172A]">{formatPhone(customer.phone)}</p>
                     </div>
                     {/* Email ID */}
                     <div>
-                        <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase mb-1.5">Email ID</p>
-                        <p className="text-[14px] font-semibold text-[#0F172A]">{customer.email || '--'}</p>
+                        <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase mb-1.5">Email ID</p>
+                        <p className="text-[16px] font-semibold text-[#0F172A]">{customer.email || '--'}</p>
                         {customer.email && (
                             <a
                                 href={`mailto:${customer.email}`}
-                                className="text-[12px] text-amber-500 font-semibold hover:underline mt-0.5 inline-block"
+                                className="text-[12px] text-[#FDC63A] font-semibold hover:underline mt-0.5 inline-block"
                             >
                                 Send email
                             </a>
@@ -355,22 +350,22 @@ const CustomerDetailPage = () => {
                     </div>
                     {/* Customer Type */}
                     <div>
-                        <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase mb-1.5">Customer Type</p>
+                        <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase mb-1.5">Customer Type</p>
                         <div className="flex items-center gap-1.5">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FDC63A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                 <circle cx="12" cy="7" r="4" />
                             </svg>
-                            <p className="text-[14px] font-semibold text-[#0F172A]">{formatCustomerType(customer.customerType)}</p>
+                            <p className="text-[16px] font-semibold text-[#0F172A]">{formatCustomerType(customer.customerType)}</p>
                         </div>
                     </div>
                     {/* No. of Orders */}
                     <div>
-                        <p className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase mb-1.5">No. of Orders</p>
+                        <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase mb-1.5">No. of Orders</p>
                         {ordersLoading && totalOrderCount === null ? (
                             <span className="inline-block w-10 h-6 bg-slate-100 animate-pulse rounded" />
                         ) : (
-                            <p className="text-[22px] font-bold text-[#0F172A]">
+                            <p className="text-[30px] font-bold text-[#0F172A]">
                                 {customer.totalOrders ?? totalOrderCount ?? '--'}
                             </p>
                         )}
@@ -381,12 +376,12 @@ const CustomerDetailPage = () => {
             {/* Customer Order History */}
             <div className="bg-white rounded-[12px] shadow-sm overflow-hidden">
                 <div className="px-6 py-5 border-b border-[#F1F5F9]">
-                    <h2 className="text-[18px] font-bold text-[#0F172A]">Customer Order History</h2>
+                    <h2 className="text-[20px] font-bold text-[#0F172A]">Customer Order History</h2>
                 </div>
 
                 {/* Filters */}
                 <div className="px-6 py-4 flex items-center gap-4 border-b border-[#F8FAFC]">
-                    <div className="relative flex-1 max-w-[360px]">
+                    <div className="relative flex-1 max-w-full">
                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="11" cy="11" r="8" />
@@ -398,43 +393,31 @@ const CustomerDetailPage = () => {
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             placeholder="Search by Order ID, Material, or Amount...."
-                            className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                            className="w-full pl-10 pr-4 py-2.5 max-w-[363.82px] border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
                         />
                     </div>
 
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                <line x1="16" y1="2" x2="16" y2="6" />
-                                <line x1="8" y1="2" x2="8" y2="6" />
-                                <line x1="3" y1="10" x2="21" y2="10" />
-                            </svg>
+                            
                         </div>
                         <input
                             type="date"
                             value={from}
                             onChange={(e) => { setFrom(e.target.value); setPage(1); }}
-                            className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                            className={`pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white ${from ? 'text-[#475569]' : 'text-[#6B7280]'}`}
                         />
                     </div>
 
                     <span className="text-[#94A3B8] font-medium">–</span>
 
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                <line x1="16" y1="2" x2="16" y2="6" />
-                                <line x1="8" y1="2" x2="8" y2="6" />
-                                <line x1="3" y1="10" x2="21" y2="10" />
-                            </svg>
-                        </div>
+
                         <input
                             type="date"
                             value={to}
                             onChange={(e) => { setTo(e.target.value); setPage(1); }}
-                            className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                            className={`pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white ${to ? 'text-[#475569]' : 'text-[#6B7280]'}`}
                         />
                     </div>
 
@@ -468,7 +451,7 @@ const CustomerDetailPage = () => {
                         <thead>
                             <tr className="border-b border-[#F1F5F9]">
                                 {ORDER_TABLE_COLS.map((col) => (
-                                    <th key={col} className="px-6 py-3 text-left text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase">
+                                    <th key={col} className="px-6 py-3 text-left text-[12px] font-bold text-[#64748B] tracking-widest uppercase">
                                         {col}
                                     </th>
                                 ))}

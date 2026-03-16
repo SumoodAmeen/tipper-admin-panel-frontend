@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchCustomers } from '../customerApi';
+import excelIcon from '../../../assets/customer/excel.png';
 
 const STATUS_CONFIG = {
     Active: { label: 'Active', bg: 'bg-green-50', text: 'text-green-600' },
@@ -125,15 +126,9 @@ const CustomerManagementPage = () => {
         <div>
             {/* Page Header */}
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-[28px] font-bold text-[#0F172A]">Customer Management</h1>
+                <h1 className="text-[30px] font-bold text-[#0F172A]">Customer Management</h1>
                 <button className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <line x1="3" y1="9" x2="21" y2="9" />
-                        <line x1="3" y1="15" x2="21" y2="15" />
-                        <line x1="9" y1="3" x2="9" y2="21" />
-                        <line x1="15" y1="3" x2="15" y2="21" />
-                    </svg>
+                    <img src={excelIcon} alt="excel" width="16" height="16" />
                     Export as XL Sheet
                 </button>
             </div>
@@ -143,7 +138,7 @@ const CustomerManagementPage = () => {
             {/* Filters */}
             <div className="flex items-center gap-4 mb-6">
                 {/* Search */}
-                <div className="relative flex-1 max-w-[420px]">
+                <div className="relative flex-1 max-w-full">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="11" cy="11" r="8" />
@@ -155,7 +150,7 @@ const CustomerManagementPage = () => {
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         placeholder="Search by Customer ID, Name, or Mobile N..."
-                        className="w-full pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                        className="w-[364px] pl-10 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
                     />
                 </div>
 
@@ -173,7 +168,7 @@ const CustomerManagementPage = () => {
                         type="date"
                         value={from}
                         onChange={handleFromChange}
-                        className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                        className={`pl-9 pr-3 py-2.5 border border-[#E2E8F0] w-[166px] rounded-[8px] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white ${from ? 'text-[#475569]' : 'text-[#6B7280]'}`}
                     />
                 </div>
 
@@ -193,7 +188,7 @@ const CustomerManagementPage = () => {
                         type="date"
                         value={to}
                         onChange={handleToChange}
-                        className="pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white"
+                        className={`pl-9 pr-3 py-2.5 border border-[#E2E8F0] w-[166px] rounded-[8px] text-[14px] focus:outline-none  focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white ${to ? 'text-[#475569]' : 'text-[#6B7280]'}`}
                     />
                 </div>
 
@@ -202,7 +197,7 @@ const CustomerManagementPage = () => {
                     <select
                         value={status}
                         onChange={handleStatusChange}
-                        className="appearance-none pl-4 pr-9 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white min-w-[120px] cursor-pointer"
+                        className={`appearance-none pl-4 pr-9 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white w-[166px] cursor-pointer ${status ? 'text-[#475569]' : 'text-[#6B7280]'}`}
                     >
                         <option value="">All</option>
                         <option value="Active">Active</option>
@@ -222,11 +217,11 @@ const CustomerManagementPage = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-[#F1F5F9]">
+                            <tr className="border-b border-[#E2E8F0]">
                                 {TABLE_COLS.map((col) => (
                                     <th
                                         key={col}
-                                        className="px-6 py-3 text-left text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase"
+                                        className="px-6 py-3 text-left text-[12px] font-bold text-[#64748B] tracking-widest uppercase"
                                     >
                                         {col}
                                     </th>
@@ -236,7 +231,7 @@ const CustomerManagementPage = () => {
                         <tbody>
                             {loading ? (
                                 Array.from({ length: LIMIT }).map((_, i) => (
-                                    <tr key={i} className="border-b border-[#F8FAFC]">
+                                    <tr key={i} className="border-b border-[#E2E8F0]">
                                         {TABLE_COLS.map((col) => (
                                             <td key={col} className="px-6 py-4">
                                                 <span className="inline-block w-24 h-4 bg-slate-100 animate-pulse rounded" />
@@ -258,7 +253,7 @@ const CustomerManagementPage = () => {
                                         text: 'text-slate-500',
                                     };
                                     return (
-                                        <tr key={customer._id} className="border-b border-[#F8FAFC] hover:bg-[#FAFAFA] transition-colors">
+                                        <tr key={customer._id} className="hover:bg-[#FAFAFA] transition-colors">
                                             <td className="px-6 py-4 text-[14px] font-bold text-[#0F172A]">
                                                 {getCustomerId(customer)}
                                             </td>
@@ -282,7 +277,7 @@ const CustomerManagementPage = () => {
                                             <td className="px-6 py-4">
                                                 <button
                                                     onClick={() => navigate(`/customer-management/${customer._id}`)}
-                                                    className="px-4 py-1.5 bg-[#FDC63A] text-[#0F172A] text-[12px] font-bold rounded-[6px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
+                                                    className="px-4 py-1.5 bg-[#FDC63A] text-[#1C180C] text-[12px] font-bold rounded-[6px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
                                                 >
                                                     Details
                                                 </button>
@@ -297,7 +292,7 @@ const CustomerManagementPage = () => {
 
                 {/* Pagination */}
                 {!loading && customers.length > 0 && (
-                    <div className="px-6 py-4 flex items-center justify-between border-t border-[#F1F5F9]">
+                    <div className="px-6 py-4 flex items-center justify-between border-t border-[#E2E8F0]">
                         <p className="text-[14px] text-[#64748B]">
                             Showing {showingFrom} to {showingTo} of {totalCount} Customers
                         </p>
