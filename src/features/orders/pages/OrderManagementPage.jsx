@@ -7,22 +7,17 @@ const STATUS_CONFIG = {
     bidding: { label: 'Order Received', bg: 'bg-amber-50', text: 'text-amber-600' },
     assigned: { label: 'Assigned', bg: 'bg-purple-50', text: 'text-purple-600' },
     confirmed: { label: 'In Transit', bg: 'bg-blue-50', text: 'text-blue-500' },
+    out_for_delivery: { label: 'Out for Delivery', bg: 'bg-indigo-50', text: 'text-indigo-600' },
     delivered: { label: 'Delivered', bg: 'bg-green-50', text: 'text-green-600' },
     cancelled: { label: 'Cancelled', bg: 'bg-red-50', text: 'text-red-500' },
+    rejected: { label: 'Rejected', bg: 'bg-red-50', text: 'text-red-500' },
+    expired: { label: 'Expired', bg: 'bg-slate-50', text: 'text-slate-400' },
 };
 
 const TABLE_COLS = ['ORDER ID', 'PARTNER', 'MATERIAL', 'QUANTITY', 'AMOUNT', 'STATUS', 'ACTION'];
 
 const LIMIT = 10;
 
-const formatDate = (dateStr) => {
-    if (!dateStr) return '--';
-    const d = new Date(dateStr);
-    const dd = String(d.getDate()).padStart(2, '0');
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const yyyy = d.getFullYear();
-    return `${dd} - ${mm} - ${yyyy}`;
-};
 
 const formatAmount = (order) => {
     const amount = order.finalAmount > 0 ? order.finalAmount : order.estimatedAmount;
@@ -46,7 +41,7 @@ const OrderManagementPage = () => {
     const [error, setError] = useState('');
     const [searchInput, setSearchInput] = useState('');
     const [search, setSearch] = useState('');
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState('confirmed,assigned,out_for_delivery,delivered,cancelled,rejected');
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [page, setPage] = useState(1);
@@ -65,9 +60,7 @@ const OrderManagementPage = () => {
             setLoading(true);
             try {
                 const data = await fetchOrders({ page, limit: LIMIT, search, status, from, to });
-                const excluded = ['bidding', 'requested', 'expired'];
-                const filtered = (data.orders ?? []).filter((o) => !excluded.includes(o.status));
-                setOrders(filtered);
+                setOrders(data.orders ?? []);
                 setPagination(data.pagination ?? { totalCount: 0, totalPages: 1, currentPage: 1 });
             } catch (err) {
                 setError(err.message);
@@ -222,11 +215,14 @@ const OrderManagementPage = () => {
                         onChange={handleStatusChange}
                         className="appearance-none pl-4 pr-9 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white min-w-[140px] cursor-pointer"
                     >
-                        <option value="">All</option>
+                        <option value="confirmed,assigned,out_for_delivery,delivered,cancelled,rejected">All</option>
                         <option value="assigned">Assigned</option>
                         <option value="confirmed">In Transit</option>
+                        <option value="out_for_delivery">Out for Delivery</option>
                         <option value="delivered">Delivered</option>
                         <option value="cancelled">Cancelled</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="expired">Expired</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

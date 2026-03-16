@@ -75,7 +75,7 @@ const OrderDetailModal = ({ orderId, onClose }) => {
                     try {
                         const partnerData = await fetchPartnerById(data.order.assignedPartner.partnerId);
                         setPartner(partnerData);
-                    } catch (_) {
+                    } catch {
                         // Partner fetch failed silently — section will be hidden
                     }
                 }

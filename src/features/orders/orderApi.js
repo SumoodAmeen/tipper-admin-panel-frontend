@@ -9,8 +9,8 @@ export const fetchOrders = async ({ page = 1, limit = 10, search = '', status = 
     const params = new URLSearchParams({ page, limit });
     if (search) params.set('search', search);
     if (status) params.set('status', status);
-    if (from) params.set('from', from);
-    if (to) params.set('to', to);
+    if (from) params.set('fromDate', from);
+    if (to) params.set('toDate', to);
 
     const response = await fetch(`${BASE_URL}/orders/manage/all?${params}`, {
         method: 'GET',

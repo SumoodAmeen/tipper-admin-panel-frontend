@@ -125,8 +125,8 @@ const CustomerDetailPage = () => {
                 setOrders(data.orders);
                 setPagination(data.pagination);
                 // Store unfiltered total on first load
-                if (totalOrderCount === null && !search && !orderStatus && !from && !to && page === 1) {
-                    setTotalOrderCount(data.pagination.totalCount);
+                if (!search && !orderStatus && !from && !to && page === 1) {
+                    setTotalOrderCount(prev => prev === null ? data.pagination.totalCount : prev);
                 }
             })
             .catch(() => {})

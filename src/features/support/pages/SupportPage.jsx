@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
 import {
     searchOrderByNumber,
     fetchTickets,
@@ -393,7 +392,6 @@ const getCategoryColor = (name) => {
 // ── Main Page ────────────────────────────────────────────────────────────────
 
 const SupportPage = () => {
-    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('support');
     const [tickets, setTickets] = useState([]);
     const [pagination, setPagination] = useState({ totalCount: 0, totalPages: 1, currentPage: 1 });
@@ -412,7 +410,7 @@ const SupportPage = () => {
     const [reviewsError, setReviewsError] = useState('');
     const [reviewsPage, setReviewsPage] = useState(1);
 
-    const loadTickets = async (p = page) => {
+    const loadTickets = useCallback(async (p) => {
         setLoading(true);
         setError('');
         try {
@@ -438,11 +436,11 @@ const SupportPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         loadTickets(page);
-    }, [page]);
+    }, [page, loadTickets]);
 
     useEffect(() => {
         if (activeTab !== 'reviews') return;
