@@ -30,8 +30,11 @@ export const searchOrderByNumber = async (orderNumber) => {
     return data.data;
 };
 
-export const fetchTickets = async ({ page = 1, limit = 10 } = {}) => {
+export const fetchTickets = async ({ page = 1, limit = 10, search = '', from = '', to = '' } = {}) => {
     const params = new URLSearchParams({ page, limit });
+    if (search) params.set('search', search);
+    if (from) params.set('fromDate', from);
+    if (to) params.set('toDate', to);
     const response = await fetch(`${BASE_URL}/support/tickets?${params}`, {
         method: 'GET',
         headers: authHeaders(),
@@ -95,8 +98,8 @@ export const fetchCategories = async () => {
 export const fetchRatings = async ({ page = 1, limit = 10, search = '', from = '', to = '' } = {}) => {
     const params = new URLSearchParams({ page, limit });
     if (search) params.set('search', search);
-    if (from) params.set('from', from);
-    if (to) params.set('to', to);
+    if (from) params.set('fromDate', from);
+    if (to) params.set('toDate', to);
 
     const response = await fetch(`${BASE_URL}/ratings/all?${params}`, {
         method: 'GET',

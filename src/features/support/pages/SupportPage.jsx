@@ -403,6 +403,12 @@ const SupportPage = () => {
     const [summaryModal, setSummaryModal] = useState(null); // { ticketId, hasSummary }
     const [orderDetailId, setOrderDetailId] = useState(null);
 
+    // Shared search & date filter
+    const [searchInput, setSearchInput] = useState('');
+    const [search, setSearch] = useState('');
+    const [from, setFrom] = useState('');
+    const [to, setTo] = useState('');
+
     // Reviews tab state
     const [reviews, setReviews] = useState([]);
     const [reviewsPagination, setReviewsPagination] = useState({ totalCount: 0, totalPages: 1, currentPage: 1 });
@@ -410,11 +416,21 @@ const SupportPage = () => {
     const [reviewsError, setReviewsError] = useState('');
     const [reviewsPage, setReviewsPage] = useState(1);
 
-    const loadTickets = useCallback(async (p) => {
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setSearch(searchInput);
+            setPage(1);
+            setReviewsPage(1);
+        }, 400);
+        return () => clearTimeout(timer);
+    }, [searchInput]);
+
+    const loadTickets = useCallback(async (p, s, f, t) => {
         setLoading(true);
         setError('');
         try {
-            const data = await fetchTickets({ page: p, limit: LIMIT });
+            const data = await fetchTickets({ page: p, limit: LIMIT, search: s, from: f, to: t });
             const list = data.tickets;
             setPagination(data.pagination);
 
@@ -439,31 +455,31 @@ const SupportPage = () => {
     }, []);
 
     useEffect(() => {
-        loadTickets(page);
-    }, [page, loadTickets]);
+        loadTickets(page, search, from, to);
+    }, [page, search, from, to, loadTickets]);
 
     useEffect(() => {
         if (activeTab !== 'reviews') return;
         setReviewsLoading(true);
         setReviewsError('');
-        fetchRatings({ page: reviewsPage, limit: LIMIT })
+        fetchRatings({ page: reviewsPage, limit: LIMIT, search, from, to })
             .then((data) => {
                 setReviews(data.ratings);
                 setReviewsPagination(data.pagination);
             })
             .catch((err) => setReviewsError(err.message))
             .finally(() => setReviewsLoading(false));
-    }, [activeTab, reviewsPage]);
+    }, [activeTab, reviewsPage, search, from, to]);
 
     const handleCreated = () => {
         setShowAddModal(false);
         setPage(1);
-        loadTickets(1);
+        loadTickets(1, search, from, to);
     };
 
     const handleSummarySaved = () => {
         setSummaryModal(null);
-        loadTickets(page);
+        loadTickets(page, search, from, to);
     };
 
     const { totalCount, totalPages, currentPage } = pagination;
@@ -514,6 +530,57 @@ const SupportPage = () => {
 
     return (
         <div>
+            {/* Search & Date Filters */}
+            <div className="flex items-center justify-between mb-5">
+                <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]">
+                        <SearchIcon />
+                    </span>
+                    <input
+                        type="text"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        placeholder="Search by Order ID, Customer, or Partner..."
+                        className="pl-9 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white w-[340px]"
+                    />
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                        </div>
+                        <input
+                            type="date"
+                            value={from}
+                            onChange={(e) => { setFrom(e.target.value); setPage(1); setReviewsPage(1); }}
+                            className={`pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white ${from ? 'text-[#475569]' : 'text-[#6B7280]'}`}
+                        />
+                    </div>
+                    <span className="text-[#94A3B8] font-medium">–</span>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                        </div>
+                        <input
+                            type="date"
+                            value={to}
+                            onChange={(e) => { setTo(e.target.value); setPage(1); setReviewsPage(1); }}
+                            className={`pl-9 pr-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white ${to ? 'text-[#475569]' : 'text-[#6B7280]'}`}
+                        />
+                    </div>
+                </div>
+            </div>
+
             {/* Tabs + Add button row */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-1 border-b border-[#E2E8F0] w-full">
