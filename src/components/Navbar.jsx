@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../features/auth/AuthContext';
 import { adminLogout, updateProfilePhoto } from '../features/auth/authApi';
+import { fetchNotifications } from '../features/notifications/notificationApi';
 import { getMediaUrl } from '../config/api';
 import calendar from '../assets/dashboard/calendar.png';
 import bell from '../assets/dashboard/bell.png';
@@ -31,6 +32,8 @@ const Navbar = () => {
     const [saving, setSaving] = useState(false);
     const [photoError, setPhotoError] = useState('');
 
+    const [unreadCount, setUnreadCount] = useState(0);
+
     const dropdownRef = useRef(null);
     const fileInputRef = useRef(null);
 
@@ -38,6 +41,29 @@ const Navbar = () => {
     const role = user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) + ' User' : 'Admin User';
     const initials = getInitials(displayName);
     const photoUrl = user?.photo ? getMediaUrl(user.photo) : null;
+
+    // Fetch unread notification count
+    useEffect(() => {
+        const loadUnreadCount = () => {
+            fetchNotifications({ page: 1, limit: 1 })
+                .then((data) => {
+                    const total = data.notifications.filter((n) => !n.isRead).length;
+                    // Use totalItems from pagination if all are unread on first page, otherwise approximate
+                    if (total > 0) {
+                        // Fetch a larger batch to get accurate unread count
+                        fetchNotifications({ page: 1, limit: 100 })
+                            .then((allData) => setUnreadCount(allData.notifications.filter((n) => !n.isRead).length))
+                            .catch(() => {});
+                    } else {
+                        setUnreadCount(0);
+                    }
+                })
+                .catch(() => {});
+        };
+        loadUnreadCount();
+        const interval = setInterval(loadUnreadCount, 60000); // Refresh every 60s
+        return () => clearInterval(interval);
+    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -113,11 +139,13 @@ const Navbar = () => {
             <div className="flex items-center gap-5">
 
                 {/* Notification bell */}
-                <button className="relative p-1">
+                <button onClick={() => navigate('/notifications')} className="relative p-1 cursor-pointer">
                     <img src={bell} alt="Bell" className="w-[15.55px] h-[19.44px] object-contain" />
-                    <span className="absolute -top-0.5 -right-0.5 w-[15px] h-[15px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                        3
-                    </span>
+                    {unreadCount > 0 && (
+                        <span className="absolute -top-0.5 -right-0.5 w-[15px] h-[15px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                            {unreadCount > 99 ? '99+' : unreadCount}
+                        </span>
+                    )}
                 </button>
 
                 {/* Divider */}
