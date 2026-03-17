@@ -99,7 +99,11 @@ const DashboardPage = () => {
             .finally(() => setStatsLoading(false));
 
         fetchOrderOverview()
-            .then((data) => setOrders(data.orders.slice(0, 4)))
+            .then((data) => {
+                const excluded = ['expired', 'requested', 'bidding'];
+                const filtered = (data.orders ?? []).filter((o) => !excluded.includes(o.status));
+                setOrders(filtered.slice(0, 4));
+            })
             .catch((err) => setError(err.message))
             .finally(() => setOrdersLoading(false));
     }, []);
