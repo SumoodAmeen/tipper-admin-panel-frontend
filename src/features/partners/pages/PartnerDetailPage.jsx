@@ -334,8 +334,10 @@ const PartnerDetailPage = () => {
     const photoUrl = partner.photo ? getMediaUrl(partner.photo) : null;
 
     const docs = [
-        { label: 'Aadhaar Card', path: partner.documents?.aadharFront },
-        { label: 'License Front/Back', path: partner.documents?.drivingLicense },
+        { label: 'Aadhaar Front', path: partner.documents?.aadharFront },
+        { label: 'Aadhaar Back', path: partner.documents?.aadharBack },
+        { label: 'Driving License Front', path: partner.documents?.drivingLicenseFront },
+        { label: 'Driving License Back', path: partner.documents?.drivingLicenseBack },
         { label: 'Registration Certificate (RC)', path: partner.documents?.vehicleRC },
         { label: 'Purchase Bill', path: partner.documents?.materialPurchaseBill },
     ].filter((d) => d.path);
