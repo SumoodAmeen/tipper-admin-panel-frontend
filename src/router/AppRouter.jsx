@@ -14,6 +14,7 @@ import CustomerDetailPage from '../features/customers/pages/CustomerDetailPage';
 import DriverVerificationPage from '../features/partners/pages/DriverVerificationPage';
 import SupportPage from '../features/support/pages/SupportPage';
 import NotificationsPage from '../features/notifications/pages/NotificationsPage';
+import PaymentsPage from '../features/payments/pages/PaymentsPage';
 
 const AppRouter = () => {
     return (
@@ -36,6 +37,7 @@ const AppRouter = () => {
                             <Route path="/driver-verification" element={<DriverVerificationPage />} />
                             <Route path="/support" element={<SupportPage />} />
                             <Route path="/notifications" element={<NotificationsPage />} />
+                            <Route path="/payments" element={<PaymentsPage />} />
                         </Route>
                     </Route>
 
