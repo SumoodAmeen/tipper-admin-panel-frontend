@@ -117,6 +117,13 @@ const CustomerDetailPage = () => {
         return () => clearTimeout(timer);
     }, [searchInput]);
 
+    // Fetch delivered orders count once on mount
+    useEffect(() => {
+        fetchCustomerOrders(id, { page: 1, limit: 1, status: 'delivered' })
+            .then((data) => setTotalOrderCount(data.pagination.totalCount))
+            .catch(() => {});
+    }, [id]);
+
     // Fetch orders
     useEffect(() => {
         setOrdersLoading(true);
@@ -124,10 +131,6 @@ const CustomerDetailPage = () => {
             .then((data) => {
                 setOrders(data.orders);
                 setPagination(data.pagination);
-                // Store unfiltered total on first load
-                if (!search && !orderStatus && !from && !to && page === 1) {
-                    setTotalOrderCount(prev => prev === null ? data.pagination.totalCount : prev);
-                }
             })
             .catch(() => {})
             .finally(() => setOrdersLoading(false));

@@ -814,6 +814,12 @@ const SupportPage = () => {
                                             </div>
                                         </div>
 
+                                        {/* Created By */}
+                                        <div className="w-[120px] flex-shrink-0">
+                                            <p className="text-[12px] font-bold text-[#94A3B8] tracking-widest uppercase">Created By</p>
+                                            <p className="text-[14px] font-semibold text-[#0F172A] mt-0.5">{ticket.createdBy?.fullName || '--'}</p>
+                                        </div>
+
                                         {/* Actions */}
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             <button

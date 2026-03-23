@@ -267,7 +267,7 @@ const CustomerManagementPage = () => {
                                                 {customer.phone ? `+91 ${customer.phone.slice(0, 5)} ${customer.phone.slice(5)}` : '--'}
                                             </td>
                                             <td className="px-6 py-4 text-[14px] text-[#475569]">
-                                                {customer.totalOrders ?? '--'}
+                                                {customer.completedOrderCount ?? 0}
                                             </td>
                                             <td className="px-6 py-4 text-[14px] text-[#475569]">
                                                 {formatDate(customer.createdAt)}
