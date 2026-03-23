@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchTransactions } from '../paymentApi';
+import OrderDetailModal from '../../orders/components/OrderDetailModal';
 import excelIcon from '../../../assets/partner/excel.png';
 
 const STATUS_CONFIG = {
@@ -44,6 +45,8 @@ const PaymentsPage = () => {
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [page, setPage] = useState(1);
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const [orderPickerTxn, setOrderPickerTxn] = useState(null);
 
     // Debounce search
     useEffect(() => {
@@ -283,20 +286,20 @@ const PaymentsPage = () => {
                                     };
                                     return (
                                         <tr key={txn._id} className="hover:bg-[#FAFAFA] transition-colors">
-                                            <td className="px-6 py-4 text-[14px] font-bold text-[#FDC63A]">
+                                            <td className="px-6 py-4 text-[12px] font-bold text-[#64748B]">
                                                 #{txn.transactionNumber || txn._id.slice(-6).toUpperCase()}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="text-[14px] font-semibold text-[#0F172A]">{txn.partnerName || '--'}</div>
+                                                <div className="text-[14px] font-Regular text-[#111827]">{txn.partnerName || '--'}</div>
                                                 <div className="text-[12px] text-[#94A3B8] capitalize">{txn.partnerType || ''}</div>
                                             </td>
-                                            <td className="px-6 py-4 text-[14px] text-[#475569]">
+                                            <td className="px-6 py-4 font-medium text-[14px] text-[#111827]">
                                                 {TYPE_LABELS[txn.type] || txn.type || '--'}
                                             </td>
                                             <td className="px-6 py-4 text-[14px] text-[#475569]">
                                                 {formatDate(txn.createdAt)}
                                             </td>
-                                            <td className="px-6 py-4 text-[14px] font-semibold text-[#0F172A]">
+                                            <td className="px-6 py-4 text-[14px] font-semibold text-[#111827]">
                                                 {formatAmount(txn.amount)}
                                             </td>
                                             <td className="px-6 py-4">
@@ -305,12 +308,27 @@ const PaymentsPage = () => {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors cursor-pointer">
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                                        <circle cx="12" cy="12" r="3" />
-                                                    </svg>
-                                                </button>
+                                                {txn.type === 'commission_payment' && txn.orderIds?.length > 0 ? (
+                                                    <button
+                                                        onClick={() => txn.orderIds.length === 1
+                                                            ? setSelectedOrderId(txn.orderIds[0])
+                                                            : setOrderPickerTxn(txn)
+                                                        }
+                                                        className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+                                                    >
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                                            <circle cx="12" cy="12" r="3" />
+                                                        </svg>
+                                                    </button>
+                                                ) : (
+                                                    <button disabled className="w-8 h-8 flex items-center justify-center rounded-full opacity-30 cursor-not-allowed">
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                                            <circle cx="12" cy="12" r="3" />
+                                                        </svg>
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     );
@@ -330,6 +348,42 @@ const PaymentsPage = () => {
                     </div>
                 )}
             </div>
+
+            {/* Order picker modal — for commission with multiple orders */}
+            {orderPickerTxn && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-[16px] w-full max-w-[400px] shadow-2xl p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-[16px] font-bold text-[#0F172A]">Select Order</h2>
+                            <button onClick={() => setOrderPickerTxn(null)} className="text-[#94A3B8] hover:text-[#475569] transition-colors cursor-pointer">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p className="text-[13px] text-[#64748B] mb-4">This commission covers {orderPickerTxn.orderIds.length} orders. Select one to view details.</p>
+                        <div className="space-y-2">
+                            {orderPickerTxn.orderIds.map((orderId, idx) => (
+                                <button
+                                    key={orderId}
+                                    onClick={() => { setSelectedOrderId(orderId); setOrderPickerTxn(null); }}
+                                    className="w-full flex items-center justify-between px-4 py-3 border border-[#E2E8F0] rounded-[10px] hover:border-[#FDC63A] hover:bg-amber-50/40 transition-all cursor-pointer"
+                                >
+                                    <span className="text-[14px] font-semibold text-[#0F172A]">Order {idx + 1}</span>
+                                    <span className="text-[12px] text-[#94A3B8]">{orderId.slice(-8).toUpperCase()}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {selectedOrderId && (
+                <OrderDetailModal
+                    orderId={selectedOrderId}
+                    onClose={() => setSelectedOrderId(null)}
+                />
+            )}
         </div>
     );
 };

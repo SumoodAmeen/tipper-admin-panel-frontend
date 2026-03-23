@@ -25,14 +25,19 @@ const DriverVerificationPage = () => {
     const [approveError, setApproveError] = useState('');
 
     useEffect(() => {
-        setLoading(true);
-        fetchPendingVerifications({ page, limit: LIMIT })
-            .then((data) => {
-                setDrivers(data.drivers);
-                setPagination(data.pagination);
-            })
-            .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
+        const load = () => {
+            setLoading(true);
+            fetchPendingVerifications({ page, limit: LIMIT })
+                .then((data) => {
+                    setDrivers(data.drivers);
+                    setPagination(data.pagination);
+                })
+                .catch((err) => setError(err.message))
+                .finally(() => setLoading(false));
+        };
+        load();
+        const interval = setInterval(load, 2 * 60 * 1000);
+        return () => clearInterval(interval);
     }, [page]);
 
     const handleApprove = async () => {
