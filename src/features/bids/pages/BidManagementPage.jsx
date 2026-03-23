@@ -37,6 +37,8 @@ const BidManagementPage = () => {
                 .finally(() => setLoading(false));
         };
         load();
+        const interval = setInterval(load, 2 * 60 * 1000);
+        return () => clearInterval(interval);
     }, [page]);
 
     const handleActionComplete = (orderId) => {
