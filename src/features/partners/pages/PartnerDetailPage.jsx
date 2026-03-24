@@ -58,13 +58,7 @@ const getInitials = (name = '') => {
 };
 
 const getOrderQuantity = (order) => {
-    const { vehicle, material } = order;
-    if (vehicle?.vehicleCapacity && vehicle?.numberOfLoads) {
-        return `${vehicle.vehicleCapacity} X ${vehicle.numberOfLoads}`;
-    }
-    if (material?.quantity && material?.unit) {
-        return `${material.quantity} ${material.unit}`;
-    }
+    if (order.quantity) return String(order.quantity);
     return '--';
 };
 
@@ -516,7 +510,7 @@ const PartnerDetailPage = () => {
                                     <InfoRow
                                         label="Vehicle Capacity"
                                         value={partner.vehicle?.vehicleType?.maxCapacity
-                                            ? `${partner.vehicle.vehicleType.maxCapacity} Tons`
+                                            ? `${partner.vehicle.vehicleType.maxCapacity} Feets`
                                             : '--'}
                                     />
                                     <InfoRow label="Vehicle Model" value={partner.vehicle?.model} />

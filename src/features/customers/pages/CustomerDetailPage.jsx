@@ -52,13 +52,7 @@ const getCustomerId = (user) => {
 };
 
 const getOrderQuantity = (order) => {
-    const { vehicle, material } = order;
-    if (vehicle?.vehicleCapacity && vehicle?.numberOfLoads) {
-        return `${vehicle.vehicleCapacity} X ${vehicle.numberOfLoads}`;
-    }
-    if (material?.quantity && material?.unit) {
-        return `${material.quantity} ${material.unit}`;
-    }
+    if (order.quantity) return String(order.quantity);
     return '--';
 };
 

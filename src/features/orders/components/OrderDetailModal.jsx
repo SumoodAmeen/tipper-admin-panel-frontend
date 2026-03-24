@@ -33,12 +33,8 @@ const formatAddress = (loc) => {
     return [loc.address, loc.streetOrLandmark, loc.city, loc.pincode].filter(Boolean).join(', ');
 };
 
-const formatQuantity = (material, vehicle) => {
-    const qty = material?.quantity;
-    const loads = vehicle?.numberOfLoads;
-    const unit = material?.unit ?? '';
-    if (qty && loads) return `${qty} X ${loads} (${qty * loads} ${unit})`;
-    if (qty) return `${qty} ${unit}`;
+const formatQuantity = (order) => {
+    if (order.quantity) return String(order.quantity);
     return '--';
 };
 
@@ -211,7 +207,7 @@ const OrderDetailModal = ({ orderId, onClose }) => {
                                         <div className="flex items-center gap-2 text-[13px]">
                                             <span className="text-[#94A3B8] w-[130px] flex-shrink-0">Ordered Quantity:</span>
                                             <span className="font-semibold text-[#0F172A]">
-                                                {formatQuantity(order.material, order.vehicle)}
+                                                {formatQuantity(order)}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2 text-[13px]">
