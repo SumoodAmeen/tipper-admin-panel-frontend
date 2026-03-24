@@ -76,6 +76,27 @@ const OrderManagementPage = () => {
         setPage(1);
     };
 
+    const handleExport = () => {
+        if (!orders.length) return;
+        const headers = ['Order ID', 'Partner', 'Material', 'Quantity', 'Amount', 'Status'];
+        const rows = orders.map((o) => [
+            o.orderNumber,
+            o.assignedPartner?.partnerType ? o.assignedPartner.partnerType.charAt(0).toUpperCase() + o.assignedPartner.partnerType.slice(1) : '--',
+            o.material?.materialName ?? '--',
+            o.quantity ?? '--',
+            o.finalAmount > 0 ? o.finalAmount : o.estimatedAmount ?? '--',
+            o.status || '--',
+        ]);
+        const csv = [headers, ...rows].map((r) => r.map((v) => `"${v}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `orders_page${page}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     const handleFromChange = (e) => {
         setFrom(e.target.value);
         setPage(1);
@@ -137,7 +158,7 @@ const OrderManagementPage = () => {
             {/* Page Header */}
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-[30px] font-bold text-[#0F172A]">Order Management</h1>
-                <button className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
+                <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
                     <img src={excelIcon} alt="excel" width="16" height="16" />
                     Export as XL Sheet
                 </button>

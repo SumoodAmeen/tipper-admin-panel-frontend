@@ -79,6 +79,26 @@ const CustomerManagementPage = () => {
         setPage(1);
     };
 
+    const handleExport = () => {
+        if (!customers.length) return;
+        const headers = ['Name', 'Phone', 'Orders', 'Joined Date', 'Status'];
+        const rows = customers.map((c) => [
+            c.fullName || '--',
+            c.phone || '--',
+            c.completedOrderCount ?? 0,
+            formatDate(c.createdAt),
+            c.status || '--',
+        ]);
+        const csv = [headers, ...rows].map((r) => r.map((v) => `"${v}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `customers_page${page}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     const { totalCount, totalPages, currentPage } = pagination;
     const showingFrom = totalCount === 0 ? 0 : (currentPage - 1) * LIMIT + 1;
     const showingTo = Math.min(currentPage * LIMIT, totalCount);
@@ -130,7 +150,7 @@ const CustomerManagementPage = () => {
             {/* Page Header */}
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-[30px] font-bold text-[#0F172A]">Customer Management</h1>
-                <button className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
+                <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
                     <img src={excelIcon} alt="excel" width="16" height="16" />
                     Export as XL Sheet
                 </button>

@@ -81,6 +81,27 @@ const PartnerManagementPage = () => {
         setPage(1);
     };
 
+    const handleExport = () => {
+        if (!partners.length) return;
+        const headers = ['Partner ID', 'Name', 'Phone', 'Type', 'Joined Date', 'Status'];
+        const rows = partners.map((p) => [
+            p.uniqueId || p._id,
+            p.name || '--',
+            formatPhone(p.phone),
+            p.partnerType || '--',
+            formatDate(p.createdAt),
+            p.status || '--',
+        ]);
+        const csv = [headers, ...rows].map((r) => r.map((v) => `"${v}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `partners_page${page}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     const { totalCount, totalPages, currentPage } = pagination;
     const showingFrom = totalCount === 0 ? 0 : (currentPage - 1) * LIMIT + 1;
     const showingTo = Math.min(currentPage * LIMIT, totalCount);
@@ -132,7 +153,7 @@ const PartnerManagementPage = () => {
             {/* Page Header */}
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-[30px] font-bold text-[#0F172A]">Partner Management</h1>
-                <button className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
+                <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 bg-[#FDC63A] text-[#0F172A] text-[14px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
                     <img src={excelIcon} alt="excel" width="16" height="16" />
                     Export as XL Sheet
                 </button>
