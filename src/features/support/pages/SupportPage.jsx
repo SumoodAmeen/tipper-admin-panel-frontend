@@ -124,7 +124,7 @@ const AddSupportModal = ({ onClose, onCreated }) => {
                     <button
                         onClick={handleSelectOrder}
                         disabled={creating}
-                        className="w-full flex items-center gap-3 p-3 border border-[#E2E8F0] rounded-[12px] hover:border-[#FDC63A] hover:bg-amber-50/40 transition-all cursor-pointer text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full flex items-center gap-1 p-3 border border-[#E2E8F0] rounded-[12px] hover:border-[#FDC63A] hover:bg-amber-50/40 transition-all cursor-pointer text-left disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {foundOrder.material?.image ? (
                             <img
@@ -544,7 +544,7 @@ const SupportPage = () => {
                         className="pl-9 pr-4 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[14px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FDC63A]/50 focus:border-[#FDC63A] bg-white w-[340px]"
                     />
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -645,8 +645,8 @@ const SupportPage = () => {
 
                                 return (
                                     <div key={review._id} className="bg-white rounded-[16px] border border-[#F1F5F9] p-5">
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div className="flex items-start gap-3 flex-1 min-w-0">
+                                        <div className="flex items-start justify-between gap-1">
+                                            <div className="flex items-start gap-1 flex-1 min-w-0">
                                                 {/* Avatar */}
                                                 <div className="w-10 h-10 rounded-full bg-[#FDC63A] flex items-center justify-center flex-shrink-0 overflow-hidden">
                                                     {photoUrl ? (
@@ -775,7 +775,7 @@ const SupportPage = () => {
                                 return (
                                     <div
                                         key={ticket._id}
-                                        className="bg-white rounded-[12px] border border-[#F1F5F9] p-[21px] flex items-center gap-14"
+                                        className="bg-white rounded-[12px] border border-[#F1F5F9] p-[21px] flex items-center gap-10"
                                     >
                                         {/* Material image */}
                                         {imgUrl ? (
