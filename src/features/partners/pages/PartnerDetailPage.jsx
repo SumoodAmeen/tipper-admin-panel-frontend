@@ -144,6 +144,7 @@ const PartnerDetailPage = () => {
     const [showBlockConfirm, setShowBlockConfirm] = useState(false);
     const [blocking, setBlocking] = useState(false);
     const [blockError, setBlockError] = useState('');
+    const [blockReason, setBlockReason] = useState('');
 
     const [showActivateConfirm, setShowActivateConfirm] = useState(false);
     const [activating, setActivating] = useState(false);
@@ -212,9 +213,10 @@ const PartnerDetailPage = () => {
         setBlocking(true);
         setBlockError('');
         try {
-            await blockPartner(id);
+            await blockPartner(id, blockReason);
             setPartner((prev) => ({ ...prev, status: 'Blocked' }));
             setShowBlockConfirm(false);
+            setBlockReason('');
         } catch (err) {
             setBlockError(err.message);
         } finally {
@@ -899,13 +901,23 @@ const PartnerDetailPage = () => {
                             </svg>
                         </div>
                         <h3 className="text-[18px] font-bold text-[#0F172A] text-center mb-2">Block Partner</h3>
-                        <p className="text-[13px] text-[#64748B] text-center mb-5">
+                        <p className="text-[13px] text-[#64748B] text-center mb-4">
                             Are you sure you want to block <strong>{partner.name}</strong>? They will not be able to accept new orders.
                         </p>
-                        {blockError && <p className="text-red-500 text-[13px] mb-3 text-center">{blockError}</p>}
-                        <div className="flex items-center justify-center gap-3">
+                        <div>
+                            <label className="block text-[13px] font-semibold text-[#475569] mb-1.5">Reason for blocking</label>
+                            <textarea
+                                value={blockReason}
+                                onChange={(e) => setBlockReason(e.target.value)}
+                                placeholder="Enter reason for blocking this partner..."
+                                rows={3}
+                                className="w-full px-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-300 resize-none"
+                            />
+                        </div>
+                        {blockError && <p className="text-red-500 text-[13px] mt-3 text-center">{blockError}</p>}
+                        <div className="flex items-center justify-center gap-3 mt-5">
                             <button
-                                onClick={() => setShowBlockConfirm(false)}
+                                onClick={() => { setShowBlockConfirm(false); setBlockReason(''); setBlockError(''); }}
                                 disabled={blocking}
                                 className="px-5 py-2 text-[14px] font-semibold text-[#475569] border border-[#E2E8F0] rounded-[8px] hover:bg-slate-50 disabled:opacity-50 transition-colors"
                             >
@@ -913,7 +925,7 @@ const PartnerDetailPage = () => {
                             </button>
                             <button
                                 onClick={handleBlock}
-                                disabled={blocking}
+                                disabled={blocking || !blockReason.trim()}
                                 className="px-5 py-2 text-[14px] font-bold text-white bg-red-500 rounded-[8px] hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 {blocking ? 'Blocking...' : 'Block Partner'}

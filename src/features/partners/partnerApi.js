@@ -87,10 +87,11 @@ export const notifyPartner = async (id, { title, message }) => {
     return data;
 };
 
-export const blockPartner = async (id) => {
+export const blockPartner = async (id, reason = '') => {
     const response = await fetch(`${BASE_URL}/partner/manage/${id}/block`, {
         method: 'PATCH',
         headers: authHeaders(),
+        body: JSON.stringify({ reason }),
     });
 
     const data = await response.json();
