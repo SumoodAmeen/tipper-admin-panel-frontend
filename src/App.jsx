@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import AppRouter from './router/AppRouter';
 
 function MobileBlocker() {
@@ -20,11 +21,19 @@ function MobileBlocker() {
 }
 
 function App() {
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent
   );
 
-  if (isMobile) return <MobileBlocker />;
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsSmallScreen(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (isMobileDevice || isSmallScreen) return <MobileBlocker />;
 
   return <AppRouter />;
 }
