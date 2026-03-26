@@ -679,7 +679,10 @@ const SupportPage = () => {
                                             <button className="flex-1 py-2 border border-[#E2E8F0] text-[#475569] text-[13px] font-semibold rounded-[8px] hover:bg-slate-50 transition-colors cursor-pointer">
                                                 View Partner Reply
                                             </button>
-                                            <button className="flex-1 py-2 bg-[#FDC63A] text-[#0F172A] text-[13px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer">
+                                            <button
+                                                onClick={() => setOrderDetailId(review.orderId?._id)}
+                                                className="flex-1 py-2 bg-[#FDC63A] text-[#0F172A] text-[13px] font-bold rounded-[8px] hover:bg-[#fbbf24] transition-colors cursor-pointer"
+                                            >
                                                 Order Details
                                             </button>
                                         </div>
