@@ -180,6 +180,21 @@ export const fetchPartnerOverview = async (id) => {
     return data.data;
 };
 
+export const trackPartner = async (id) => {
+    const response = await fetch(`${BASE_URL}/partner/manage/${id}/track`, {
+        method: 'GET',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch partner location');
+    }
+
+    return data.data;
+};
+
 export const fetchPartnerOrders = async (partnerId, { page = 1, limit = 10, search = '', status = '', from = '', to = '' } = {}) => {
     const params = new URLSearchParams({ page, limit });
     if (search) params.set('search', search);

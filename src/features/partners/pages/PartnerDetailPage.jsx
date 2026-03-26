@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPartnerById, fetchPartnerMaterials, fetchPartnerOverview, notifyPartner, blockPartner, activatePartner, fetchPartnerOrders, requestVerificationSelfie } from '../partnerApi';
+import { fetchPartnerById, fetchPartnerMaterials, fetchPartnerOverview, notifyPartner, blockPartner, activatePartner, fetchPartnerOrders, requestVerificationSelfie, trackPartner } from '../partnerApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
 import notificationIcon from '../../../assets/partner/notification.png';
@@ -152,6 +152,8 @@ const PartnerDetailPage = () => {
 
     const [requestingVerification, setRequestingVerification] = useState(false);
     const [verificationRequested, setVerificationRequested] = useState(false);
+
+    const [tracking, setTracking] = useState(false);
     const [verificationError, setVerificationError] = useState('');
 
     useEffect(() => {
@@ -584,14 +586,25 @@ const PartnerDetailPage = () => {
                         <p className="text-red-500 text-[12px] -mt-2">{verificationError}</p>
                     )}
                     <button
-                        disabled
-                        className="w-full flex items-center justify-center gap-2 py-3 bg-[#FDC63A] rounded-[10px] text-[14px] font-bold text-[#0F172A] opacity-60 cursor-not-allowed"
+                        disabled={tracking}
+                        onClick={async () => {
+                            setTracking(true);
+                            try {
+                                const data = await trackPartner(id);
+                                window.open(`https://www.google.com/maps?q=${data.latitude},${data.longitude}`, '_blank');
+                            } catch {
+                                alert('Unable to fetch partner location. The partner may be offline.');
+                            } finally {
+                                setTracking(false);
+                            }
+                        }}
+                        className="w-full flex items-center justify-center gap-2 py-3 bg-[#FDC63A] hover:bg-[#fabd25] rounded-[10px] text-[14px] font-bold text-[#0F172A] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 16 14" />
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                            <circle cx="12" cy="10" r="3" />
                         </svg>
-                        Track Driver Location
+                        {tracking ? 'Locating...' : 'Track Driver Location'}
                     </button>
 
                     {/* Documents */}
