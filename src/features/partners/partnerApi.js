@@ -136,7 +136,7 @@ export const fetchPendingVerifications = async ({ page = 1, limit = 12 } = {}) =
 };
 
 export const approveDriverVerification = async (id) => {
-    const response = await fetch(`${BASE_URL}/partner/manage/drivers/${id}/verification/approve`, {
+    const response = await fetch(`${BASE_URL}/partner/manage/${id}/approve`, {
         method: 'PATCH',
         headers: authHeaders(),
     });
@@ -150,10 +150,11 @@ export const approveDriverVerification = async (id) => {
     return data;
 };
 
-export const rejectDriverVerification = async (id) => {
-    const response = await fetch(`${BASE_URL}/partner/manage/drivers/${id}/verification/reject`, {
+export const rejectDriverVerification = async (id, reason) => {
+    const response = await fetch(`${BASE_URL}/partner/manage/${id}/reject`, {
         method: 'PATCH',
         headers: authHeaders(),
+        body: JSON.stringify({ reason }),
     });
 
     const data = await response.json();
