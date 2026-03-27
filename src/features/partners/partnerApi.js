@@ -150,10 +150,11 @@ export const approveDriverVerification = async (id) => {
     return data;
 };
 
-export const rejectDriverVerification = async (id) => {
+export const rejectDriverVerification = async (id, reason) => {
     const response = await fetch(`${BASE_URL}/partner/manage/drivers/${id}/verification/reject`, {
         method: 'PATCH',
         headers: authHeaders(),
+        body: JSON.stringify({ reason }),
     });
 
     const data = await response.json();

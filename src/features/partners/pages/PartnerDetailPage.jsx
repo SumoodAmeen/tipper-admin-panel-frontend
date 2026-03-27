@@ -157,7 +157,10 @@ const PartnerDetailPage = () => {
     const [verificationError, setVerificationError] = useState('');
 
     const [approving, setApproving] = useState(false);
+    const [showRejectModal, setShowRejectModal] = useState(false);
+    const [rejectReason, setRejectReason] = useState('');
     const [rejecting, setRejecting] = useState(false);
+    const [rejectError, setRejectError] = useState('');
 
     useEffect(() => {
         const load = async () => {
@@ -414,18 +417,7 @@ const PartnerDetailPage = () => {
                                 </button>
                                 <button
                                     disabled={rejecting}
-                                    onClick={async () => {
-                                        if (!window.confirm('Are you sure you want to reject this partner?')) return;
-                                        setRejecting(true);
-                                        try {
-                                            await rejectDriverVerification(id);
-                                            setPartner((p) => ({ ...p, status: 'Blocked' }));
-                                        } catch (err) {
-                                            alert(err.message || 'Failed to reject partner');
-                                        } finally {
-                                            setRejecting(false);
-                                        }
-                                    }}
+                                    onClick={() => setShowRejectModal(true)}
                                     className="flex items-center gap-2 px-4 py-2 border border-[#FF5C5C] rounded-[8px] text-[14px] font-semibold text-[#DC2626] bg-[#FEF2F2] hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -995,6 +987,65 @@ const PartnerDetailPage = () => {
                                 className="px-5 py-2 text-[14px] font-bold text-white bg-red-500 rounded-[8px] hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 {blocking ? 'Blocking...' : 'Block Partner'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Reject Confirmation */}
+            {showRejectModal && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-[16px] w-full max-w-[400px] shadow-xl p-6">
+                        <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="15" y1="9" x2="9" y2="15" />
+                                <line x1="9" y1="9" x2="15" y2="15" />
+                            </svg>
+                        </div>
+                        <h3 className="text-[18px] font-bold text-[#0F172A] text-center mb-2">Reject Partner</h3>
+                        <p className="text-[13px] text-[#64748B] text-center mb-4">
+                            Provide a reason for rejecting <strong>{partner.name}</strong>. This will be shared with the partner.
+                        </p>
+                        <div>
+                            <label className="block text-[13px] font-semibold text-[#475569] mb-1.5">Reason for rejection</label>
+                            <textarea
+                                value={rejectReason}
+                                onChange={(e) => setRejectReason(e.target.value)}
+                                placeholder="e.g. Documents are blurry, please re-upload"
+                                rows={3}
+                                className="w-full px-3 py-2.5 border border-[#E2E8F0] rounded-[8px] text-[13px] text-[#475569] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-300 resize-none"
+                            />
+                        </div>
+                        {rejectError && <p className="text-red-500 text-[13px] mt-3 text-center">{rejectError}</p>}
+                        <div className="flex items-center justify-center gap-3 mt-5">
+                            <button
+                                onClick={() => { setShowRejectModal(false); setRejectReason(''); setRejectError(''); }}
+                                disabled={rejecting}
+                                className="px-5 py-2 text-[14px] font-semibold text-[#475569] border border-[#E2E8F0] rounded-[8px] hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                disabled={rejecting || !rejectReason.trim()}
+                                onClick={async () => {
+                                    setRejecting(true);
+                                    setRejectError('');
+                                    try {
+                                        await rejectDriverVerification(id, rejectReason.trim());
+                                        setPartner((p) => ({ ...p, status: 'Blocked' }));
+                                        setShowRejectModal(false);
+                                        setRejectReason('');
+                                    } catch (err) {
+                                        setRejectError(err.message || 'Failed to reject partner');
+                                    } finally {
+                                        setRejecting(false);
+                                    }
+                                }}
+                                className="px-5 py-2 text-[14px] font-bold text-white bg-red-500 rounded-[8px] hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                {rejecting ? 'Rejecting...' : 'Reject Partner'}
                             </button>
                         </div>
                     </div>
