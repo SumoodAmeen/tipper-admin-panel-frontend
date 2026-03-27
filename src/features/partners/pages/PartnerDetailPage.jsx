@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPartnerById, fetchPartnerMaterials, fetchPartnerOverview, notifyPartner, blockPartner, activatePartner, fetchPartnerOrders, requestVerificationSelfie, trackPartner } from '../partnerApi';
+import { fetchPartnerById, fetchPartnerMaterials, fetchPartnerOverview, notifyPartner, blockPartner, activatePartner, fetchPartnerOrders, requestVerificationSelfie, trackPartner, approveDriverVerification, rejectDriverVerification } from '../partnerApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
 import notificationIcon from '../../../assets/partner/notification.png';
@@ -155,6 +155,9 @@ const PartnerDetailPage = () => {
 
     const [tracking, setTracking] = useState(false);
     const [verificationError, setVerificationError] = useState('');
+
+    const [approving, setApproving] = useState(false);
+    const [rejecting, setRejecting] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -329,6 +332,7 @@ const PartnerDetailPage = () => {
         text: 'text-slate-500',
     };
     const isBlocked = partner.status === 'Blocked';
+    const isPending = partner.status === 'Pending';
     const photoUrl = partner.photo ? getMediaUrl(partner.photo) : null;
 
     const docs = [
@@ -386,31 +390,80 @@ const PartnerDetailPage = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setShowNotifyModal(true)}
-                            className="flex items-center gap-2 px-4 py-2 border border-[#FDC63A] rounded-[8px] text-[14px] font-semibold text-[#0F172A] hover:bg-slate-50 transition-colors cursor-pointer"
-                        >
-                            <img src={notificationIcon} alt="notification" width="15" height="14" />
-                            Personalized Notification
-                        </button>
-                        {isBlocked ? (
-                            <button
-                                onClick={() => setShowActivateConfirm(true)}
-                                className="flex items-center gap-2 px-4 py-2 border border-green-200 rounded-[8px] text-[13px] font-semibold text-green-600 hover:bg-green-50 transition-colors cursor-pointer"
-                            >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="20 6 9 17 4 12" />
-                                </svg>
-                                Activate Partner
-                            </button>
+                        {isPending ? (
+                            <>
+                                <button
+                                    disabled={approving}
+                                    onClick={async () => {
+                                        setApproving(true);
+                                        try {
+                                            await approveDriverVerification(id);
+                                            setPartner((p) => ({ ...p, status: 'Active' }));
+                                        } catch (err) {
+                                            alert(err.message || 'Failed to approve partner');
+                                        } finally {
+                                            setApproving(false);
+                                        }
+                                    }}
+                                    className="flex items-center gap-2 px-4 py-2 bg-green-600 rounded-[8px] text-[14px] font-semibold text-white hover:bg-green-700 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    {approving ? 'Approving...' : 'Approve Partner'}
+                                </button>
+                                <button
+                                    disabled={rejecting}
+                                    onClick={async () => {
+                                        if (!window.confirm('Are you sure you want to reject this partner?')) return;
+                                        setRejecting(true);
+                                        try {
+                                            await rejectDriverVerification(id);
+                                            setPartner((p) => ({ ...p, status: 'Blocked' }));
+                                        } catch (err) {
+                                            alert(err.message || 'Failed to reject partner');
+                                        } finally {
+                                            setRejecting(false);
+                                        }
+                                    }}
+                                    className="flex items-center gap-2 px-4 py-2 border border-[#FF5C5C] rounded-[8px] text-[14px] font-semibold text-[#DC2626] bg-[#FEF2F2] hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18" />
+                                        <line x1="6" y1="6" x2="18" y2="18" />
+                                    </svg>
+                                    {rejecting ? 'Rejecting...' : 'Reject Partner'}
+                                </button>
+                            </>
                         ) : (
-                            <button
-                                onClick={() => setShowBlockConfirm(true)}
-                                className="flex items-center gap-2 px-4 py-2 border border-[#FF5C5C] rounded-[8px] text-[13px] font-semibold text-[#DC2626] bg-[#FEF2F2] hover:bg-red-50 transition-colors cursor-pointer"
-                            >
-                                <img src={blockIcon} alt="block" width="15" height="15" />
-                                Block Partner
-                            </button>
+                            <>
+                                <button
+                                    onClick={() => setShowNotifyModal(true)}
+                                    className="flex items-center gap-2 px-4 py-2 border border-[#FDC63A] rounded-[8px] text-[14px] font-semibold text-[#0F172A] hover:bg-slate-50 transition-colors cursor-pointer"
+                                >
+                                    <img src={notificationIcon} alt="notification" width="15" height="14" />
+                                    Personalized Notification
+                                </button>
+                                {isBlocked ? (
+                                    <button
+                                        onClick={() => setShowActivateConfirm(true)}
+                                        className="flex items-center gap-2 px-4 py-2 border border-green-200 rounded-[8px] text-[13px] font-semibold text-green-600 hover:bg-green-50 transition-colors cursor-pointer"
+                                    >
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                        Activate Partner
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => setShowBlockConfirm(true)}
+                                        className="flex items-center gap-2 px-4 py-2 border border-[#FF5C5C] rounded-[8px] text-[13px] font-semibold text-[#DC2626] bg-[#FEF2F2] hover:bg-red-50 transition-colors cursor-pointer"
+                                    >
+                                        <img src={blockIcon} alt="block" width="15" height="15" />
+                                        Block Partner
+                                    </button>
+                                )}
+                            </>
                         )}
                     </div>
                 </div>

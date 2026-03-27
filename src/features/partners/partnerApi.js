@@ -150,6 +150,21 @@ export const approveDriverVerification = async (id) => {
     return data;
 };
 
+export const rejectDriverVerification = async (id) => {
+    const response = await fetch(`${BASE_URL}/partner/manage/drivers/${id}/verification/reject`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to reject driver');
+    }
+
+    return data;
+};
+
 export const requestVerificationSelfie = async (id) => {
     const response = await fetch(`${BASE_URL}/partner/manage/drivers/${id}/verification/request`, {
         method: 'POST',
