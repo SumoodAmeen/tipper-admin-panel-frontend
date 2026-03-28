@@ -156,7 +156,7 @@ export const fetchPendingVerifications = async ({ page = 1, limit = 12 } = {}) =
 };
 
 export const approveDriverVerification = async (id) => {
-    const response = await fetch(`${BASE_URL}/partner/manage/${id}/approve`, {
+    const response = await fetch(`${BASE_URL}/partner/manage/drivers/${id}/verification/approve`, {
         method: 'PATCH',
         headers: authHeaders(),
     });
