@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPartnerById, fetchPartnerMaterials, fetchPartnerOverview, notifyPartner, blockPartner, activatePartner, fetchPartnerOrders, requestVerificationSelfie, trackPartner, approveDriverVerification, rejectDriverVerification } from '../partnerApi';
+import { fetchPartnerById, fetchPartnerMaterials, fetchPartnerOverview, notifyPartner, blockPartner, activatePartner, updatePartnerStatus, fetchPartnerOrders, requestVerificationSelfie, trackPartner, approveDriverVerification, rejectDriverVerification } from '../partnerApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
 import notificationIcon from '../../../assets/partner/notification.png';
@@ -221,7 +221,7 @@ const PartnerDetailPage = () => {
         setBlocking(true);
         setBlockError('');
         try {
-            await blockPartner(id, blockReason);
+            await updatePartnerStatus(id, partner.partnerType, 'Rejected', blockReason);
             setPartner((prev) => ({ ...prev, status: 'Blocked' }));
             setShowBlockConfirm(false);
             setBlockReason('');
@@ -236,7 +236,7 @@ const PartnerDetailPage = () => {
         setActivating(true);
         setActivateError('');
         try {
-            await activatePartner(id);
+            await updatePartnerStatus(id, partner.partnerType, 'Active');
             setPartner((prev) => ({ ...prev, status: 'Active' }));
             setShowActivateConfirm(false);
         } catch (err) {

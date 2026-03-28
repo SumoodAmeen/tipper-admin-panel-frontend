@@ -118,6 +118,26 @@ export const activatePartner = async (id) => {
     return data;
 };
 
+export const updatePartnerStatus = async (id, partnerType, status, reason = '') => {
+    const segment = partnerType === 'driver' ? 'drivers' : 'dealers';
+    const body = { status };
+    if (reason) body.reason = reason;
+
+    const response = await fetch(`${BASE_URL}/partner/manage/${segment}/${id}/status`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+        body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to update partner status');
+    }
+
+    return data;
+};
+
 export const fetchPendingVerifications = async ({ page = 1, limit = 12 } = {}) => {
     const params = new URLSearchParams({ page, limit });
 
