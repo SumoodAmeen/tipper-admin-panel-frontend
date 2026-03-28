@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPartnerById, fetchPartnerMaterials, fetchPartnerOverview, notifyPartner, blockPartner, activatePartner, updatePartnerStatus, fetchPartnerOrders, requestVerificationSelfie, trackPartner, approveDriverVerification, rejectDriverVerification } from '../partnerApi';
+import { fetchPartnerById, fetchPartnerMaterials, fetchPartnerOverview, notifyPartner, blockPartner, activatePartner, updatePartnerStatus, fetchPartnerOrders, requestVerificationSelfie, trackPartner } from '../partnerApi';
 import { getMediaUrl } from '../../../config/api';
 import OrderDetailModal from '../../orders/components/OrderDetailModal';
 import notificationIcon from '../../../assets/partner/notification.png';
@@ -221,7 +221,7 @@ const PartnerDetailPage = () => {
         setBlocking(true);
         setBlockError('');
         try {
-            await updatePartnerStatus(id, partner.partnerType, 'Rejected', blockReason);
+            await blockPartner(id, blockReason);
             setPartner((prev) => ({ ...prev, status: 'Blocked' }));
             setShowBlockConfirm(false);
             setBlockReason('');
@@ -236,7 +236,7 @@ const PartnerDetailPage = () => {
         setActivating(true);
         setActivateError('');
         try {
-            await updatePartnerStatus(id, partner.partnerType, 'Active');
+            await activatePartner(id);
             setPartner((prev) => ({ ...prev, status: 'Active' }));
             setShowActivateConfirm(false);
         } catch (err) {
@@ -400,7 +400,7 @@ const PartnerDetailPage = () => {
                                     onClick={async () => {
                                         setApproving(true);
                                         try {
-                                            await approveDriverVerification(id);
+                                            await updatePartnerStatus(id, partner.partnerType, 'Active');
                                             setPartner((p) => ({ ...p, status: 'Active' }));
                                         } catch (err) {
                                             alert(err.message || 'Failed to approve partner');
@@ -1033,7 +1033,7 @@ const PartnerDetailPage = () => {
                                     setRejecting(true);
                                     setRejectError('');
                                     try {
-                                        await rejectDriverVerification(id, rejectReason.trim());
+                                        await updatePartnerStatus(id, partner.partnerType, 'Rejected', rejectReason.trim());
                                         setPartner((p) => ({ ...p, status: 'Blocked' }));
                                         setShowRejectModal(false);
                                         setRejectReason('');
